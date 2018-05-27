@@ -106,7 +106,7 @@ class Comment(BlockchainObject):
         if self.steem.rpc.get_use_appbase():
             content = self.steem.rpc.get_discussion({'author': author, 'permlink': permlink}, api="tags")
         else:
-            content = self.steem.rpc.get_content(author, permlink)
+            content = self.steem.rpc.get_content(author, permlink, api='social_network')
         if not content or not content['author'] or not content['permlink']:
             raise ContentDoesNotExistsException(self.identifier)
         super(Comment, self).__init__(content, id_item="authorperm", steem_instance=self.steem)
