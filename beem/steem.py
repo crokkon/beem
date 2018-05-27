@@ -309,6 +309,7 @@ class Steem(object):
         return self.rpc.get_feed_history(api="database")
 
     def get_reward_funds(self, use_stored_data=True):
+        return None
         """ Get details for a reward fund.
 
             :param bool use_stored_data: if True, stored data will be returned. If stored data are
