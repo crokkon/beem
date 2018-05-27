@@ -470,7 +470,7 @@ class Blockchain(object):
                 for event in trx[trx_nr]["operations"]:
                     if isinstance(event, list):
                         op_type, op = event
-                        trx_id = block["transaction_ids"][trx_nr]
+                        # trx_id = block["transaction_ids"][trx_nr]
                         block_num = block.get("id")
                         _id = self.hash_op(event)
                         timestamp = formatTimeString(block.get("timestamp"))
@@ -479,13 +479,13 @@ class Blockchain(object):
                         if len(op_type) > 10 and op_type[len(op_type) - 10:] == "_operation":
                             op_type = op_type[:-10]
                         op = event["value"]
-                        trx_id = block["transaction_ids"][trx_nr]
+                        # trx_id = block["transaction_ids"][trx_nr]
                         block_num = block.get("id")
                         _id = self.hash_op(event)
                         timestamp = formatTimeString(block.get("timestamp"))
                     else:
                         op_type, op = event["op"]
-                        trx_id = event.get("trx_id")
+                        # trx_id = event.get("trx_id")
                         block_num = event.get("block")
                         _id = self.hash_op(event["op"])
                         timestamp = formatTimeString(event.get("timestamp"))
@@ -500,7 +500,7 @@ class Blockchain(object):
                             updated_op.update({"_id": _id,
                                                "timestamp": timestamp,
                                                "block_num": block_num,
-                                               "trx_id": trx_id})
+                                               "trx_id": 0})
                             yield updated_op
 
     def awaitTxConfirmation(self, transaction, limit=10):
