@@ -400,7 +400,7 @@ class GrapheneRPC(object):
         """Map all methods to RPC calls and pass through the arguments."""
         def method(*args, **kwargs):
 
-            api_name = get_api_name(self.is_appbase_ready(), *args, **kwargs)
+            api_name = get_api_name(self.is_appbase_ready(), *args, **kwargs) or "database_api"
             if self.is_appbase_ready() and self.use_condenser:
                 api_name = "condenser_api"
 
