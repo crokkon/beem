@@ -306,7 +306,7 @@ class Steem(object):
         if self.rpc is None:
             return None
         self.rpc.set_next_node_on_empty_reply(True)
-        return self.rpc.get_feed_history(api="database")
+        return self.rpc.get_feed_history(api="witness")
 
     def get_reward_funds(self, use_stored_data=True):
         return None
@@ -609,7 +609,7 @@ class Steem(object):
         if self.rpc is None:
             return None
         self.rpc.set_next_node_on_empty_reply(True)
-        return self.rpc.get_witness_schedule(api="database")
+        return self.rpc.get_witness_schedule(api="witness")
 
     def get_config(self, use_stored_data=True, replace_steemit_by_steem=False):
         """ Returns internal chain configuration.

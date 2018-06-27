@@ -100,7 +100,7 @@ class Account(BlockchainObject):
         else:
             if self.full:
                 account = self.steem.rpc.get_accounts(
-                    [self.identifier])
+                    [self.identifier], api='database')
             else:
                 account = self.steem.rpc.lookup_account_names(
                     [self.identifier])
@@ -1227,7 +1227,7 @@ class Account(BlockchainObject):
             except ApiNotSupported:
                 ret = self.steem.rpc.get_account_history(account["name"], start, limit)
         else:
-            ret = self.steem.rpc.get_account_history(account["name"], start, limit, api="database")
+            ret = self.steem.rpc.get_account_history(account["name"], start, limit, api="account_history")
         return ret
 
     def estimate_virtual_op_num(self, blocktime, stop_diff=1, max_count=100):
