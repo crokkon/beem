@@ -275,13 +275,13 @@ class Blockchain(object):
             ret = self.steem.rpc.get_transaction_hex(transaction, api="database")
         return ret
 
-    def get_current_block_num(self, use_stored_data=False):
+    def get_current_block_num(self):
         """ This call returns the current block number
 
             .. note:: The block number returned depends on the ``mode`` used
                       when instantiating from this class.
         """
-        props = self.steem.get_dynamic_global_properties(use_stored_data)
+        props = self.steem.get_dynamic_global_properties(False)
         if props is None:
             raise ValueError("Could not receive dynamic_global_properties!")
         if self.mode not in props:
