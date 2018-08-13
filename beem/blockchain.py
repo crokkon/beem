@@ -274,13 +274,13 @@ class Blockchain(object):
             ret = self.steem.rpc.get_transaction_hex(transaction, api="database")
         return ret
 
-    def get_current_block_num(self):
+    def get_current_block_num(self, use_stored_data=False):
         """ This call returns the current block number
 
             .. note:: The block number returned depends on the ``mode`` used
                       when instantiating from this class.
         """
-        props = self.steem.get_dynamic_global_properties(False)
+        props = self.steem.get_dynamic_global_properties(use_stored_data)
         if props is None:
             raise ValueError("Could not receive dynamic_global_properties!")
         if self.mode not in props:
@@ -572,12 +572,12 @@ class Blockchain(object):
 
         """
         if not blocks_waiting_for:
-            blocks_waiting_for = max(
-                1, block_number - self.get_current_block_num())
-
+            blocks_waiting_for = 1
             repetition = 0
             # can't return the block before the chain has reached it (support future block_num)
             while self.get_current_block_num() < block_number:
+                blocks_waiting_for = max(
+                    1, block_number - self.get_current_block_num(use_stored_data=True))
                 repetition += 1
                 time.sleep(self.block_interval)
                 if repetition > blocks_waiting_for * self.max_block_wait_repetition:
