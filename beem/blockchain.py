@@ -420,7 +420,7 @@ class Blockchain(object):
 
             if threading and not head_block_reached:
                 # disable autoclean
-                auto_clean = current_block.get_cache_auto_clean()
+                # auto_clean = current_block.get_cache_auto_clean()
                 latest_block = start - 1
                 result_block_nums = []
                 for blocknum in range(start, head_block + 1, thread_num):
@@ -428,7 +428,7 @@ class Blockchain(object):
                     i = 0
                     if FUTURES_MODULE is not None:
                         futures = []
-                    block_num_list = []
+                    k_num_list = []
                     # current_block.set_cache_auto_clean(False)
                     freeze = self.steem.rpc.nodes.freeze_current_node
                     num_retries = self.steem.rpc.nodes.num_retries
@@ -496,7 +496,7 @@ class Blockchain(object):
                             block = Block(blocknum, only_ops=only_ops, only_virtual_ops=only_virtual_ops, steem_instance=self.steem)
                             result_block_nums.append(blocknum)
                             yield block
-                current_block.set_cache_auto_clean(auto_clean)
+                # current_block.set_cache_auto_clean(auto_clean)
             elif max_batch_size is not None and (head_block - start) >= max_batch_size and not head_block_reached:
                 if not self.steem.is_connected():
                     raise OfflineHasNoRPCException("No RPC available in offline mode!")
