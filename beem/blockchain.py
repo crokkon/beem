@@ -242,6 +242,7 @@ class Blockchain(object):
         else:
             self.max_block_wait_repetition = 3
         self.block_interval = self.steem.get_block_interval()
+        self.last_current_block_num = 0
 
     def is_irreversible_mode(self):
         return self.mode == 'last_irreversible_block_num'
@@ -285,7 +286,9 @@ class Blockchain(object):
             raise ValueError("Could not receive dynamic_global_properties!")
         if self.mode not in props:
             raise ValueError(self.mode + " is not in " + str(props))
-        return int(props.get(self.mode))
+        block_num = int(props.get(self.mode))
+        self.last_current_block_num = block_num
+        return block_num
 
     def get_current_block(self, only_ops=False, only_virtual_ops=False):
         """ This call returns the current block
@@ -386,11 +389,8 @@ class Blockchain(object):
                       confirmed in an irreversible block.
 
         """
-        # Let's find out how often blocks are generated!
-        current_block = self.get_current_block()
-        current_block_num = current_block.block_num
         if not start:
-            start = current_block_num
+            start = self.get_current_block_num()
         head_block_reached = False
         if threading and FUTURES_MODULE is not None:
             pool = ThreadPoolExecutor(max_workers=thread_num)
@@ -409,9 +409,15 @@ class Blockchain(object):
         while True:
             if stop:
                 head_block = stop
+            elif latest_block == 0 or \
+                 self.last_current_block_num <= latest_block:
+                # update with latest block from the chain
+                head_block = self.get_current_block_num()
             else:
-                current_block_num = self.get_current_block_num()
-                head_block = current_block_num
+                # latest received block is well below the last known chain head,
+                # no need to update the chain head
+                head_block = self.last_current_block_num
+
             if threading and not head_block_reached:
                 # disable autoclean
                 auto_clean = current_block.get_cache_auto_clean()
@@ -548,6 +554,7 @@ class Blockchain(object):
                     # Get full block
                     block = self.wait_for_and_get_block(blocknum, only_ops=only_ops, only_virtual_ops=only_virtual_ops, block_number_check_cnt=5)
                     yield block
+                latest_block = head_block
             # Set new start
             start = head_block + 1
             head_block_reached = True
@@ -575,9 +582,9 @@ class Blockchain(object):
             blocks_waiting_for = 1
             repetition = 0
             # can't return the block before the chain has reached it (support future block_num)
-            while self.get_current_block_num() < block_number:
-                blocks_waiting_for = max(
-                    1, block_number - self.get_current_block_num(use_stored_data=True))
+            while self.last_current_block_num < block_number and \
+                  self.get_current_block_num() < block_number:
+                blocks_waiting_for = max(1, block_number - self.last_current_block_num)
                 repetition += 1
                 time.sleep(self.block_interval)
                 if repetition > blocks_waiting_for * self.max_block_wait_repetition:
