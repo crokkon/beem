@@ -474,9 +474,10 @@ class Testcases(unittest.TestCase):
             content = self.bts.rpc.get_accounts([account["name"]])[0]
         keys = list(content.keys())
         json_content = account.json()
-        exclude_list = []  # ['json_metadata', 'reputation', 'active_votes', 'savings_sbd_seconds']
+        exclude_list = ['average_bandwidth']  # ['json_metadata', 'reputation', 'active_votes', 'savings_sbd_seconds']
         for k in keys:
             if k not in exclude_list:
+                print(k, content[k])
                 if isinstance(content[k], dict) and isinstance(json_content[k], list):
                     content_list = [content[k]["amount"], content[k]["precision"], content[k]["nai"]]
                     self.assertEqual(content_list, json_content[k])
@@ -589,3 +590,7 @@ class Testcases(unittest.TestCase):
         account = self.account
         for vote_pwr in range(5, 100, 5):
             self.assertTrue(9900 <= account.get_vote_pct_for_SBD(account.get_voting_value_SBD(voting_power=vote_pwr), voting_power=vote_pwr) <= 11000)
+
+
+if __name__ == "__main__":
+    unittest.main()
