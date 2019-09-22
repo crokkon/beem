@@ -313,7 +313,7 @@ class Blockchain(object):
                       when instantiating from this class.
 
             .. code-block:: python
-        
+
                 >>> from beem.blockchain import Blockchain
                 >>> from datetime import datetime
                 >>> blockchain = Blockchain()
@@ -339,10 +339,10 @@ class Blockchain(object):
             if block_number > last_block.identifier:
                 block_number = last_block.identifier
             block_time_diff = timedelta(seconds=10)
-            
+
             last_block_time_diff_seconds = 10
             second_last_block_time_diff_seconds = 10
-            
+
             while block_time_diff.total_seconds() > self.block_interval or block_time_diff.total_seconds() < -self.block_interval:
                 block = BlockHeader(block_number, blockchain_instance=self.blockchain)
                 second_last_block_time_diff_seconds = last_block_time_diff_seconds
@@ -785,6 +785,7 @@ class Blockchain(object):
                                                "timestamp": timestamp,
                                                "block_num": block_num,
                                                "trx_num": trx_nr,
+                                               "block_id": block.get('block_id', None),
                                                "trx_id": trx_id})
                             yield updated_op
 
