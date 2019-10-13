@@ -571,7 +571,7 @@ class Blockchain(object):
                 return
 
             # Sleep for one block
-            time.sleep(self.block_interval)
+            time.sleep(self.block_interval/6)
 
     def wait_for_and_get_block(self, block_number, blocks_waiting_for=None, only_ops=False, only_virtual_ops=False, block_number_check_cnt=-1, last_current_block_num=None):
         """ Get the desired block from the chain, if the current head block is smaller (for both head and irreversible)
@@ -598,8 +598,8 @@ class Blockchain(object):
             repetition = 0
             # can't return the block before the chain has reached it (support future block_num)
             while last_current_block_num < block_number:
-                repetition += 1
-                time.sleep(self.block_interval)
+                repetition += 1.0/6
+                time.sleep(self.block_interval/6)
                 if last_current_block_num - block_number < 50:
                     last_current_block_num = self.get_current_block_num()
                 if repetition > blocks_waiting_for * self.max_block_wait_repetition:
@@ -616,8 +616,8 @@ class Blockchain(object):
                 block = None
                 if repetition > blocks_waiting_for * self.max_block_wait_repetition:
                     raise BlockWaitTimeExceeded("Already waited %d s" % (blocks_waiting_for * self.max_block_wait_repetition * self.block_interval))
-                repetition += 1
-                time.sleep(self.block_interval)
+                repetition += 1.0/6
+                time.sleep(self.block_interval/6)
 
         return block
 
