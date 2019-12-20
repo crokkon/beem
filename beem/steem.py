@@ -314,7 +314,7 @@ class Steem(object):
         except:
             reserve_ratio = {'id': 0, 'average_block_size': None,
                              'current_reserve_ratio': None,
-                             'max_virtual_bandwidth': None}            
+                             'max_virtual_bandwidth': None}
         return reserve_ratio
 
     def get_feed_history(self, use_stored_data=True):
@@ -425,7 +425,12 @@ class Steem(object):
     def get_median_price(self, use_stored_data=True):
         """ Returns the current median history price as Price
         """
-        median_price = self.get_current_median_history(use_stored_data=use_stored_data)
+        if self.steem_symbol == self.sbd_symbol:
+            # Network without SBD-equivalent - assume a median price of 1 SBD/STEEM
+            median_price = {'base': Amount(1, self.sbd_symbol, steem_instance=self),
+                            'quote': Amount(1, self.steem_symbol, steem_instance=self)}
+        else:
+            median_price = self.get_current_median_history(use_stored_data=use_stored_data)
         if median_price is None:
             return None
         a = Price(
