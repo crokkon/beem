@@ -363,10 +363,22 @@ def seperate_yaml_dict_from_body(content):
         body = content
     return body, parameter
 
-    
+
 def load_dirty_json(dirty_json):
     regex_replace = [(r"([ \{,:\[])(u)?'([^']+)'", r'\1"\3"'), (r" False([, \}\]])", r' false\1'), (r" True([, \}\]])", r' true\1')]
     for r, s in regex_replace:
         dirty_json = re.sub(r, s, dirty_json)
     clean_json = json.loads(dirty_json)
-    return clean_json    
+    return clean_json
+
+
+def strip_dict(orig_dict, strip_key):
+    """ Check if key exists in the dict and reduce dict to `dict[key]` if found.
+    @param dict orig_dict: input dict
+    @param str strip_key: key to check
+    @return dict reduced to `orig_dict[strip_key]` if found, else returns `orig_dict`
+
+    """
+    if not isinstance(orig_dict, dict) or strip_key not in orig_dict:
+        return orig_dict
+    return orig_dict[strip_key]

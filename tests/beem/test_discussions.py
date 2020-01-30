@@ -27,7 +27,7 @@ class Testcases(unittest.TestCase):
         nodelist = NodeList()
         nodelist.update_nodes(steem_instance=Steem(node=nodelist.get_nodes(exclude_limited=False, appbase=True), num_retries=10))
         node_list = nodelist.get_nodes(exclude_limited=True)
-      
+
         cls.bts = Steem(
             node=node_list,
             use_condenser=True,
@@ -123,7 +123,6 @@ class Testcases(unittest.TestCase):
         bts = self.bts
         query = Query()
         query["limit"] = 10
-        query["filter_tags"] = ["gtg"]
         query["start_author"] = "gtg"
         d = Discussions_by_comments(query, steem_instance=bts)
         self.assertEqual(len(d), 10)
