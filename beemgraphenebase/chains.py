@@ -126,7 +126,7 @@ known_chains = {
     "HIVE": {
         "chain_id": "0000000000000000000000000000000000000000000000000000000000000000",
         "min_version": "0.23.0",
-        "prefix": "HIV",
+        "prefix": "STM",
         "chain_assets": [
             {"asset": "@@000000013", "symbol": "HBD", "precision": 3, "id": 0},
             {"asset": "@@000000021", "symbol": "HIVE", "precision": 3, "id": 1},
