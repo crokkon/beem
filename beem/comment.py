@@ -95,7 +95,10 @@ class Comment(BlockchainObject):
         ]
         for p in sbd_amounts:
             if p in comment and isinstance(comment.get(p), (string_types, list, dict)):
-                comment[p] = Amount(comment.get(p, "0.000 %s" % (self.steem.sbd_symbol)), steem_instance=self.steem)
+                # comment[p] = Amount(comment.get(p, "0.000 %s" % (self.steem.sbd_symbol)), steem_instance=self.steem)
+                # TODO: This is a temporary hack until HIVE reports 'max_accepted_payout' in HBD instead of SBD
+                amount = comment[p].split(' ')[0]
+                comment[p] = Amount("%s %s" % (amount, self.steem.sbd_symbol), steem_instance=self.steem)
 
         # turn json_metadata into python dict
         meta_str = comment.get("json_metadata", "{}")
@@ -401,7 +404,7 @@ class Comment(BlockchainObject):
             active_votes = self.get_votes()
             for vote in active_votes:
                 if voter["name"] == vote["voter"]:
-                    specific_vote = vote 
+                    specific_vote = vote
         if specific_vote is not None and (raw_data or not self.is_pending()):
             return specific_vote
         elif specific_vote is not None:
@@ -529,7 +532,7 @@ class Comment(BlockchainObject):
             total_vote_weight = 0
             for vote in active_votes_list:
                 total_vote_weight += vote["weight"]
-            
+
         if not self["allow_curation_rewards"] or not self.is_pending():
             max_rewards = Amount(0, self.steem.steem_symbol, steem_instance=self.steem)
             unclaimed_rewards = max_rewards.copy()
@@ -657,7 +660,7 @@ class Comment(BlockchainObject):
 
         """
         if weight < 0:
-            raise ValueError("Weight must be >= 0.")        
+            raise ValueError("Weight must be >= 0.")
         last_payout = self.get('last_payout', None)
         if last_payout is not None:
             if formatToTimeStamp(last_payout) > 0:

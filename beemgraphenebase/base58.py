@@ -31,6 +31,7 @@ known_prefixes = [
     "WKA",
     "EUR",
     "WLS",
+    "HIV",
 ]
 
 

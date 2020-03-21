@@ -123,4 +123,14 @@ known_chains = {
             {"asset": "VESTS", "symbol": "VESTS", "precision": 6, "id": 2}
         ],
     },
+    "HIVE": {
+        "chain_id": "0000000000000000000000000000000000000000000000000000000000000000",
+        "min_version": "0.0.0",
+        "prefix": "HIV",
+        "chain_assets": [
+            {"asset": "@@000000013", "symbol": "HBD", "precision": 3, "id": 0},
+            {"asset": "@@000000021", "symbol": "HIVE", "precision": 3, "id": 1},
+            {"asset": "@@000000037", "symbol": "VESTS", "precision": 6, "id": 2}
+        ],
+    },
 }
