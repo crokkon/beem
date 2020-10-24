@@ -5,7 +5,7 @@ import hashlib
 from binascii import hexlify, unhexlify
 from .account import PrivateKey
 from .base58 import Base58, base58decode
-from .py23 import py23_bytes, bytes_types, integer_types, string_types, text_type
+from .py23 import py23_bytes, text_type
 log = logging.getLogger(__name__)
 
 try:
@@ -56,7 +56,7 @@ def encrypt(privkey, passphrase):
     if isinstance(privkey, str):
         privkey = PrivateKey(privkey)
     else:
-        privkey = PrivateKey(repr(privkey))    
+        privkey = PrivateKey(repr(privkey))
 
     privkeyhex = repr(privkey)   # hex
     addr = format(privkey.bitcoin.address, "BTC")

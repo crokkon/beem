@@ -6,8 +6,6 @@ import time
 from calendar import timegm
 from binascii import hexlify, unhexlify
 from datetime import datetime
-from collections import OrderedDict
-from .objecttypes import object_type
 from .py23 import py23_bytes
 
 timeformat = '%Y-%m-%dT%H:%M:%S%Z'

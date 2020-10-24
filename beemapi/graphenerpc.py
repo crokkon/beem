@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
-from itertools import cycle
-import threading
-import sys
 import json
-import signal
 import logging
 import ssl
 import re
-import time
-import warnings
-import six
 from .exceptions import (
-    UnauthorizedError, RPCConnection, RPCError, RPCErrorDoRetry, NumRetriesReached, CallRetriesReached, WorkingNodeMissing, TimeoutException
+    UnauthorizedError, RPCConnection, RPCError, RPCErrorDoRetry, CallRetriesReached, WorkingNodeMissing
 )
 from .rpcutils import (
     is_network_appbase_ready,
@@ -20,7 +13,6 @@ from .rpcutils import (
 from .node import Nodes
 from beemgraphenebase.version import version as beem_version
 from beemgraphenebase.chains import known_chains
-from _thread import interrupt_main
 WEBSOCKET_MODULE = None
 if not WEBSOCKET_MODULE:
     try:
@@ -33,8 +25,6 @@ REQUEST_MODULE = None
 if not REQUEST_MODULE:
     try:
         import requests
-        from requests.adapters import HTTPAdapter
-        from requests.packages.urllib3.util.retry import Retry
         from requests.exceptions import ConnectionError
         REQUEST_MODULE = "requests"
     except ImportError:
@@ -207,7 +197,7 @@ class GrapheneRPC(object):
                     if self.use_tor:
                         self.session.proxies = {}
                         self.session.proxies['http'] = 'socks5h://localhost:9050'
-                        self.session.proxies['https'] = 'socks5h://localhost:9050'                        
+                        self.session.proxies['https'] = 'socks5h://localhost:9050'
                     self.current_rpc = self.rpc_methods["appbase"]
                     self.headers = {'User-Agent': 'beem v%s' % (beem_version),
                                     'content-type': 'application/json; charset=utf-8'}
@@ -339,7 +329,7 @@ class GrapheneRPC(object):
         highest_version_chain = None
         for k, v in list(self.known_chains.items()):
             if blockchain_name is not None and blockchain_name not in k and blockchain_name != "STEEMIT" and blockchain_name != "CHAIN":
-                continue 
+                continue
             if v["chain_id"] == chain_id and self.version_string_to_int(v["min_version"]) <= self.version_string_to_int(network_version):
                 if highest_version_chain is None:
                     highest_version_chain = v

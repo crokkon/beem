@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
 import time
 import ecdsa
 import hashlib
-from binascii import hexlify, unhexlify
+from binascii import hexlify
 import struct
 import logging
 from .account import PrivateKey, PublicKey
@@ -38,7 +37,6 @@ if not SECP256K1_MODULE:
         from cryptography.hazmat.primitives.asymmetric import ec
         from cryptography.hazmat.primitives.asymmetric.utils \
             import decode_dss_signature, encode_dss_signature
-        from cryptography.exceptions import InvalidSignature
         CRYPTOGRAPHY_AVAILABLE = True
     except ImportError:
         CRYPTOGRAPHY_AVAILABLE = False

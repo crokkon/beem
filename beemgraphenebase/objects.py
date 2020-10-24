@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
-from collections import OrderedDict
 import json
 from beemgraphenebase.types import (
-    Uint8, Int16, Uint16, Uint32, Uint64,
-    Varint32, Int64, String, Bytes, Void,
-    Array, PointInTime, Signature, Bool,
-    Set, Fixed_array, Optional, Static_variant,
-    Map, Id, JsonObj
+    String, Optional, Id, JsonObj
 )
-from .py23 import py23_bytes, bytes_types, integer_types, string_types
-from .objecttypes import object_type
+from .py23 import py23_bytes, integer_types, string_types
 from .operationids import operations
 
 

@@ -5,10 +5,8 @@ import re
 import os
 import codecs
 import ecdsa
-import ctypes
 import binascii
 import bisect
-import hmac
 import itertools
 from binascii import hexlify, unhexlify
 import unicodedata
@@ -165,7 +163,7 @@ class BrainKey(Prefix):
 
 
 # From https://github.com/trezor/python-mnemonic/blob/master/mnemonic/mnemonic.py
-# 
+#
 # Copyright (c) 2013 Pavol Rusnak
 # Copyright (c) 2017 mruddy
 class Mnemonic(object):
@@ -328,7 +326,7 @@ class Mnemonic(object):
 
         :param str mnemonic: string containing a valid mnemonic word list
         :param str passphrase: optional, passphrase can be set to modify the returned seed.
-        
+
         """
         mnemonic = cls.normalize_string(mnemonic)
         passphrase = cls.normalize_string(passphrase)
@@ -360,7 +358,7 @@ class MnemonicKey(Prefix):
         mnemonic = Mnemonic()
         if not mnemonic.check(word_list):
             raise ValueError("Word list is not valid!")
-        self.seed = mnemonic.to_seed(word_list, passphrase=passphrase)   
+        self.seed = mnemonic.to_seed(word_list, passphrase=passphrase)
 
     def generate_mnemonic(self, passphrase="", strength=256):
         mnemonic = Mnemonic()
@@ -377,7 +375,7 @@ class MnemonicKey(Prefix):
         if key_sequence < 0:
             raise ValueError("key_sequence must be >= 0")
         if chain_sequence < 0:
-            raise ValueError("chain_sequence must be >= 0")        
+            raise ValueError("chain_sequence must be >= 0")
         self.account_sequence = account_sequence
         self.key_sequence = key_sequence
         if hardened_address:
@@ -417,7 +415,7 @@ class MnemonicKey(Prefix):
     def next_sequence(self):
         """ Increment the key sequence number by 1 """
         self.key_sequence += 1
-        return self  
+        return self
 
     def set_path(self, path):
         self.path = path
@@ -504,7 +502,7 @@ class Address(Prefix):
         pkbin = unhexlify(repr(pubkey_plain))
         result = hexlify(hashlib.sha512(pkbin).digest())
         result = hexlify(ripemd160(result)).decode("ascii")
-        return cls(result, prefix=pubkey.prefix)    
+        return cls(result, prefix=pubkey.prefix)
 
     def __repr__(self):
         """ Gives the hex representation of the ``GrapheneBase58CheckEncoded``
@@ -573,7 +571,7 @@ class PublicKey(Prefix):
         self.set_prefix(prefix)
         if isinstance(pk, PublicKey):
             pk = format(pk, self.prefix)
-            
+
         if str(pk).startswith("04"):
             # We only ever deal with compressed keys, so let's make it
             # compressed
@@ -729,7 +727,7 @@ class PrivateKey(Prefix):
             import os
             self._wif = Base58(hexlify(os.urandom(32)).decode('ascii'))
         elif isinstance(wif, PrivateKey):
-            self._wif = wif._wif    
+            self._wif = wif._wif
         elif isinstance(wif, Base58):
             self._wif = wif
         else:
@@ -793,7 +791,7 @@ class PrivateKey(Prefix):
         secexp = (seed + z) % order
         secret = "%0x" % secexp
         if len(secret) < 64: # left-pad with zeroes
-            secret = ("0" * (64-len(secret))) + secret        
+            secret = ("0" * (64-len(secret))) + secret
         return PrivateKey(secret, prefix=self.pubkey.prefix)
 
     def __format__(self, _format):

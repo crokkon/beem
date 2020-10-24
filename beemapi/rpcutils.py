@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
-import time
 import json
 import logging
-from .exceptions import (
-    UnauthorizedError, RPCConnection, RPCError, NumRetriesReached, CallRetriesReached
-)
-from .node import Nodes
 
 log = logging.getLogger(__name__)
 

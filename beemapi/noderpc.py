@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
 from .graphenerpc import GrapheneRPC
 from . import exceptions
 import logging
@@ -156,7 +155,7 @@ class NodeRPC(GrapheneRPC):
             doRetry = True
         elif re.search("Server error", str(e)):
             self._switch_to_next_node(str(e))
-            doRetry = True            
+            doRetry = True
         elif re.search("Can only vote once every 3 seconds", msg):
             raise exceptions.VotedBeforeWaitTimeReached(msg)
         elif re.search("out_of_rangeEEEE: unknown key", msg) or re.search("unknown key:unknown key", msg):

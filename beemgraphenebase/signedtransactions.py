@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from beemgraphenebase.py23 import py23_bytes, bytes_types
+from beemgraphenebase.py23 import py23_bytes
 import ecdsa
 import hashlib
 from binascii import hexlify, unhexlify
@@ -27,7 +27,7 @@ class Signed_Transaction(GrapheneObject):
         signature
 
         :param num ref_block_num: reference block number
-        :param num ref_block_prefix: 
+        :param num ref_block_prefix:
         :param str expiration: expiration date
         :param array operations:  array of operations
     """

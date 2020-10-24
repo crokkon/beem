@@ -8,7 +8,6 @@ from beemgraphenebase.types import (
     Array,
     Signature,
 )
-from binascii import hexlify
 import logging
 log = logging.getLogger(__name__)
 

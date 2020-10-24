@@ -1,19 +1,14 @@
 # -*- coding: utf-8 -*-
-from beemgraphenebase.py23 import py23_bytes, bytes_types
 import ecdsa
 import hashlib
 from binascii import hexlify, unhexlify
 from collections import OrderedDict
 from asn1crypto.core import OctetString
-import struct
-from collections import OrderedDict
 import json
 
-from .py23 import py23_bytes, bytes_types, integer_types, string_types, py23_chr
-from .objecttypes import object_type
+from .py23 import py23_bytes, string_types, py23_chr
 from .bip32 import parse_path
 
-from .account import PublicKey
 from .types import (
     Array,
     Set,
@@ -26,10 +21,9 @@ from .types import (
     Varint32,
     Optional
 )
-from .objects import GrapheneObject, isArgsThisClass
+from .objects import isArgsThisClass
 from .operations import Operation
 from .chains import known_chains
-from .ecdsasig import sign_message, verify_message
 import logging
 log = logging.getLogger(__name__)
 
@@ -227,7 +221,7 @@ class Unsigned_Transaction(GrapheneObjectASN1):
         elif role == "posting":
             return "48'/13'/4'/%d'/%d'" % (account_index, key_index)
         elif role == "memo":
-            return "48'/13'/3'/%d'/%d'" % (account_index, key_index)        
+            return "48'/13'/3'/%d'/%d'" % (account_index, key_index)
 
     def build_apdu(self, path="48'/13'/0'/0'/0'", chain=None):
         self.deriveDigest(chain)
@@ -236,7 +230,7 @@ class Unsigned_Transaction(GrapheneObjectASN1):
         message = self.message
         path_size = int(len(path) / 4)
         message_size = len(message)
-        
+
         offset = 0
         first = True
         result = []
@@ -245,7 +239,7 @@ class Unsigned_Transaction(GrapheneObjectASN1):
                 chunk = message[offset: offset + 200]
             else:
                 chunk = message[offset:]
-    
+
             if first:
                 total_size = int(len(path)) + 1 + len(chunk)
                 apdu = unhexlify("d4040000") + py23_chr(total_size) + py23_chr(path_size) + path + chunk

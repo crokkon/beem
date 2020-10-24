@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-import json
 import re
 import time
 import logging
 from .exceptions import (
-    UnauthorizedError, RPCConnection, RPCError, NumRetriesReached, CallRetriesReached
+    NumRetriesReached, CallRetriesReached
 )
 log = logging.getLogger(__name__)
 
@@ -41,10 +40,10 @@ class Nodes(list):
         elif urls is not None:
             url_list = [urls]
         else:
-            url_list = []        
+            url_list = []
         super(Nodes, self).__init__([Node(x) for x in url_list])
         self.current_node_index = -1
-        self.freeze_current_node = False        
+        self.freeze_current_node = False
 
     def __iter__(self):
         return self

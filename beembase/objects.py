@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 from math import floor
-from beemgraphenebase.py23 import py23_bytes, bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.py23 import py23_bytes, string_types
 from collections import OrderedDict
 from beemgraphenebase.types import (
-    Uint8, Int16, Uint16, Uint32, Uint64,
-    Varint32, Int64, String, Bytes, Void,
-    Array, PointInTime, Signature, Bool,
-    Set, Fixed_array, Optional, Static_variant,
+    Int16, Uint16, Uint32, Uint64,
+    String, Bytes, Array, Static_variant,
     Map, Id
 )
 from beemgraphenebase.objects import GrapheneObject, isArgsThisClass
-from .objecttypes import object_type
 from beemgraphenebase.account import PublicKey
 from beemgraphenebase.objects import Operation as GPHOperation
 from beemgraphenebase.chains import known_chains
@@ -87,7 +84,7 @@ class Amount(object):
             if self.symbol == "HBD" and replace_hive_by_steem:
                 self.symbol = "SBD"
             elif self.symbol == "HIVE" and replace_hive_by_steem:
-                self.symbol = "STEEM"              
+                self.symbol = "STEEM"
             self.asset = d.asset["asset"]
             self.precision = d.asset["precision"]
             self.amount = floor(float(self.amount) * 10 ** self.precision)
@@ -101,7 +98,7 @@ class Amount(object):
         if self.symbol == "HBD":
             self.symbol = "SBD"
         elif self.symbol == "HIVE":
-            self.symbol = "STEEM"        
+            self.symbol = "STEEM"
         symbol = self.symbol + "\x00" * (7 - len(self.symbol))
         return (struct.pack("<q", int(self.amount)) + struct.pack("<b", self.precision) +
                 py23_bytes(symbol, "ascii"))
@@ -189,7 +186,7 @@ class WitnessProps(GrapheneObject):
                     ('account_creation_fee', Amount(kwargs["account_creation_fee"], prefix=prefix, replace_hive_by_steem=False)),
                     ('maximum_block_size', Uint32(kwargs["maximum_block_size"])),
                     ('hbd_interest_rate', Uint16(kwargs["hbd_interest_rate"])),
-                ]))                
+                ]))
             else:
                 super(WitnessProps, self).__init__(OrderedDict([
                     ('account_creation_fee', Amount(kwargs["account_creation_fee"], prefix=prefix, replace_hive_by_steem=replace_hive_by_steem)),

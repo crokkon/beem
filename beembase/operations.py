@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.py23 import string_types
 from collections import OrderedDict
 import json
-from binascii import hexlify, unhexlify
+from binascii import hexlify
 import re
 from beemgraphenebase.types import (
-    Uint8, Int16, Uint16, Uint32, Uint64,
-    Varint32, Int64, String, Bytes, Void,
-    Array, PointInTime, Signature, Bool,
-    Set, Fixed_array, Optional, Static_variant,
-    Map, Id, HexString
+    Int16, Uint16, Uint32, Uint64,
+    String, Array, PointInTime, Bool,
+    Optional, Map, HexString
 )
 from .objects import GrapheneObject, isArgsThisClass
 from beemgraphenebase.account import PublicKey
@@ -18,13 +16,9 @@ from .objects import (
     Operation,
     Memo,
     Amount,
-    Extension,
-    Price,
     WitnessProps,
     Permission,
     ExchangeRate,
-    Beneficiaries,
-    Beneficiary,
     CommentOptionExtensions
 )
 
@@ -306,7 +300,7 @@ class Account_update2(GrapheneObject):
         if "memo_key" in kwargs:
             memo_key = Optional(PublicKey(kwargs["memo_key"], prefix=prefix))
         else:
-            memo_key = Optional(None)        
+            memo_key = Optional(None)
 
         meta = ""
         if "json_metadata" in kwargs and kwargs["json_metadata"]:
@@ -319,7 +313,7 @@ class Account_update2(GrapheneObject):
             if isinstance(kwargs["posting_json_metadata"], dict):
                 posting_meta = json.dumps(kwargs["posting_json_metadata"])
             else:
-                posting_meta = kwargs["posting_json_metadata"]        
+                posting_meta = kwargs["posting_json_metadata"]
 
         super(Account_update2, self).__init__(OrderedDict([
             ('account', String(kwargs["account"])),
@@ -372,7 +366,7 @@ class Update_proposal_votes(GrapheneObject):
         super(Update_proposal_votes, self).__init__(
             OrderedDict([
                 ('voter', String(kwargs["voter"])),
-                ('proposal_ids', Array(proposal_ids)),          
+                ('proposal_ids', Array(proposal_ids)),
                 ('approve', Bool(kwargs["approve"])),
                 ('extensions', extensions)
             ]))
@@ -388,7 +382,7 @@ class Remove_proposal(GrapheneObject):
         extensions = Array([])
         proposal_ids = []
         for e in kwargs["proposal_ids"]:
-            proposal_ids.append(Uint64(e))        
+            proposal_ids.append(Uint64(e))
 
         super(Remove_proposal, self).__init__(
             OrderedDict([
@@ -449,7 +443,7 @@ class Witness_set_properties(GrapheneObject):
             elif isinstance(k[1], int) and k[0] in ["sbd_interest_rate"]:
                 props[k[0]] = (hexlify(Uint16(k[1]).__bytes__())).decode()
             elif isinstance(k[1], int) and k[0] in ["hbd_interest_rate"]:
-                props[k[0]] = (hexlify(Uint16(k[1]).__bytes__())).decode()            
+                props[k[0]] = (hexlify(Uint16(k[1]).__bytes__())).decode()
             elif not isinstance(k[1], str) and k[0] in ["account_creation_fee"]:
                 props[k[0]] = (hexlify(Amount(k[1], prefix=prefix, replace_hive_by_steem=replace_hive_by_steem, json_str=json_str).__bytes__())).decode()
             elif not is_hex and isinstance(k[1], str) and k[0] in ["account_creation_fee"]:
@@ -458,14 +452,14 @@ class Witness_set_properties(GrapheneObject):
                 if 'prefix' not in k[1]:
                     k[1]['prefix'] = prefix
                 if 'replace_hive_by_steem' not in k[1]:
-                    k[1]['replace_hive_by_steem'] = replace_hive_by_steem                
+                    k[1]['replace_hive_by_steem'] = replace_hive_by_steem
                 props[k[0]] = (hexlify(ExchangeRate(k[1]).__bytes__())).decode()
             elif not isinstance(k[1], str) and k[0] in ["hbd_exchange_rate"]:
                 if 'prefix' not in k[1]:
                     k[1]['prefix'] = prefix
                 if 'replace_hive_by_steem' not in k[1]:
-                    k[1]['replace_hive_by_steem'] = False                
-                props[k[0]] = (hexlify(ExchangeRate(k[1]).__bytes__())).decode()                
+                    k[1]['replace_hive_by_steem'] = False
+                props[k[0]] = (hexlify(ExchangeRate(k[1]).__bytes__())).decode()
             elif not is_hex and k[0] in ["url"]:
                 props[k[0]] = (hexlify(String(k[1]).__bytes__())).decode()
             else:
@@ -610,7 +604,7 @@ class Comment_options(GrapheneObject):
                     ('allow_curation_rewards',
                      Bool(bool(kwargs["allow_curation_rewards"]))),
                     ('extensions', extensions),
-                ]))            
+                ]))
 
 
 class Delete_comment(GrapheneObject):
@@ -638,7 +632,7 @@ class Feed_publish(GrapheneObject):
         if 'prefix' not in kwargs['exchange_rate']:
             kwargs['exchange_rate']['prefix'] = prefix
         if 'replace_hive_by_steem' not in kwargs['exchange_rate']:
-            kwargs['exchange_rate']['replace_hive_by_steem'] = replace_hive_by_steem        
+            kwargs['exchange_rate']['replace_hive_by_steem'] = replace_hive_by_steem
         super(Feed_publish, self).__init__(
             OrderedDict([
                 ('publisher', String(kwargs["publisher"])),
@@ -786,7 +780,7 @@ class Limit_order_create2(GrapheneObject):
         if 'prefix' not in kwargs['exchange_rate']:
             kwargs['exchange_rate']['prefix'] = prefix
         if 'replace_hive_by_steem' not in kwargs['exchange_rate']:
-            kwargs['exchange_rate']['replace_hive_by_steem'] = replace_hive_by_steem        
+            kwargs['exchange_rate']['replace_hive_by_steem'] = replace_hive_by_steem
         super(Limit_order_create2, self).__init__(
             OrderedDict([
                 ('owner', String(kwargs["owner"])),
@@ -871,7 +865,7 @@ class Claim_reward_balance(GrapheneObject):
                     ('reward_hive', Amount(kwargs["reward_hive"], prefix=prefix, replace_hive_by_steem=False)),
                     ('reward_hbd', Amount(kwargs["reward_hbd"], prefix=prefix, replace_hive_by_steem=False)),
                     ('reward_vests', Amount(kwargs["reward_vests"], prefix=prefix)),
-                ]))    
+                ]))
         elif "reward_steem" in kwargs:
             super(Claim_reward_balance, self).__init__(
                 OrderedDict([
@@ -885,7 +879,7 @@ class Claim_reward_balance(GrapheneObject):
                     ('account', String(kwargs["account"])),
                     ('reward_hive', Amount(kwargs["reward_hive"], prefix=prefix, replace_hive_by_steem=False)),
                     ('reward_vests', Amount(kwargs["reward_vests"], prefix=prefix)),
-                ]))            
+                ]))
 
 
 class Transfer_to_savings(GrapheneObject):
@@ -985,7 +979,7 @@ class Escrow_transfer(GrapheneObject):
                     ('ratification_deadline', PointInTime(kwargs["ratification_deadline"])),
                     ('escrow_expiration', PointInTime(kwargs["escrow_expiration"])),
                     ('json_meta', String(meta)),
-                ]))            
+                ]))
 
 
 class Escrow_dispute(GrapheneObject):
@@ -1031,7 +1025,7 @@ class Escrow_release(GrapheneObject):
                     ('escrow_id', Uint32(kwargs["escrow_id"])),
                     ('hbd_amount', Amount(kwargs["hbd_amount"], prefix=prefix, replace_hive_by_steem=False)),
                     ('hive_amount', Amount(kwargs["hive_amount"], prefix=prefix, replace_hive_by_steem=False)),
-                ]))            
+                ]))
 
 
 class Escrow_approve(GrapheneObject):

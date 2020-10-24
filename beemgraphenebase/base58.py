@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from binascii import hexlify, unhexlify
-from .py23 import py23_bytes, py23_chr, bytes_types, integer_types, string_types, text_type
+from .py23 import py23_bytes, py23_chr, integer_types, string_types
 from .prefix import Prefix
 import hashlib
 import string

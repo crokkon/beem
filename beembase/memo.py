@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from beemgraphenebase.py23 import py23_bytes, bytes_types
+from beemgraphenebase.py23 import py23_bytes
 from beemgraphenebase.base58 import base58encode, base58decode
 from beemgraphenebase.types import varintdecode
-import sys
 import hashlib
 from binascii import hexlify, unhexlify
 try:
@@ -12,7 +11,7 @@ except ImportError:
         from Crypto.Cipher import AES
     except ImportError:
         raise ImportError("Missing dependency: pyCryptodome")
-from beemgraphenebase.account import PrivateKey, PublicKey
+from beemgraphenebase.account import PublicKey
 from .objects import Memo
 import struct
 default_prefix = "STM"
@@ -65,7 +64,7 @@ def init_aes_bts(shared_secret, nonce):
     ss = hashlib.sha512(unhexlify(shared_secret)).digest()
     " Seed "
     seed = bytes(str(nonce), "ascii") + hexlify(ss)
-    seed_digest = hexlify(hashlib.sha512(seed).digest()).decode("ascii")  
+    seed_digest = hexlify(hashlib.sha512(seed).digest()).decode("ascii")
     " AES "
     key = unhexlify(seed_digest[0:64])
     iv = unhexlify(seed_digest[64:96])
@@ -224,7 +223,7 @@ def decode_memo(priv, message):
     aes, checksum = init_aes(shared_secret, nonce)
     # Check
     if not check == checksum:
-        raise AssertionError("Checksum failure")    
+        raise AssertionError("Checksum failure")
     # Encryption
     # remove the varint prefix (FIXME, long messages!)
     numBytes = 16 - len(cipher) % 16
