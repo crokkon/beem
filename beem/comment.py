@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 import json
-import re
 import logging
 import pytz
 import math
-import warnings
-from datetime import datetime, date, time
+from datetime import datetime, date
 from .instance import shared_blockchain_instance
 from .account import Account
 from .amount import Amount
 from .price import Price
-from .utils import resolve_authorperm, construct_authorperm, construct_authorpermvoter, derive_permlink, remove_from_dict, make_patch, formatTimeString, formatToTimeStamp
+from .utils import resolve_authorperm, construct_authorperm, make_patch, formatTimeString, formatToTimeStamp
 from .blockchainobject import BlockchainObject
 from .exceptions import ContentDoesNotExistsException, VotingInvalidOnArchivedPost
 from beembase import operations
-from beemgraphenebase.py23 import py23_bytes, bytes_types, integer_types, string_types, text_type
-from beem.constants import STEEM_REVERSE_AUCTION_WINDOW_SECONDS_HF6, STEEM_REVERSE_AUCTION_WINDOW_SECONDS_HF20, STEEM_100_PERCENT, STEEM_1_PERCENT, STEEM_REVERSE_AUCTION_WINDOW_SECONDS_HF21
+from beemgraphenebase.py23 import bytes_types, integer_types, string_types
+from beem.constants import STEEM_REVERSE_AUCTION_WINDOW_SECONDS_HF6, STEEM_REVERSE_AUCTION_WINDOW_SECONDS_HF20, STEEM_REVERSE_AUCTION_WINDOW_SECONDS_HF21
 log = logging.getLogger(__name__)
 
 
@@ -61,7 +59,7 @@ class Comment(BlockchainObject):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         if isinstance(authorperm, string_types) and authorperm != "":
             [author, permlink] = resolve_authorperm(authorperm)
@@ -176,10 +174,10 @@ class Comment(BlockchainObject):
                 raise ContentDoesNotExistsException(self.identifier)
         else:
             from beemapi.exceptions import InvalidParameters
-            try:            
+            try:
                 content = self.blockchain.rpc.get_content(author, permlink)
             except InvalidParameters:
-                raise ContentDoesNotExistsException(self.identifier)                
+                raise ContentDoesNotExistsException(self.identifier)
         if not content or not content['author'] or not content['permlink']:
             raise ContentDoesNotExistsException(self.identifier)
         content = self._parse_json_data(content)
@@ -427,7 +425,7 @@ class Comment(BlockchainObject):
             active_votes = self.get_votes()
             for vote in active_votes:
                 if voter["name"] == vote["voter"]:
-                    specific_vote = vote 
+                    specific_vote = vote
         if specific_vote is not None and (raw_data or not self.is_pending()):
             return specific_vote
         elif specific_vote is not None:
@@ -476,8 +474,8 @@ class Comment(BlockchainObject):
     def get_author_rewards(self):
         """ Returns the author rewards.
 
-            
-            
+
+
             Example::
 
                 {
@@ -514,7 +512,7 @@ class Comment(BlockchainObject):
         elif median_hist is not None and "percent_hbd" in self:
             sbd_steem = author_tokens * self["percent_hbd"] / 20000.
             vesting_steem = median_price.as_base(self.blockchain.token_symbol) * (author_tokens - sbd_steem)
-            return {'pending_rewards': True, "payout_SP": vesting_steem, "payout_SBD": sbd_steem, "total_payout_SBD": author_tokens}        
+            return {'pending_rewards': True, "payout_SP": vesting_steem, "payout_SBD": sbd_steem, "total_payout_SBD": author_tokens}
         else:
             return {'pending_rewards': True, "total_payout": author_tokens, "payout_SBD": None, "total_payout_SBD": None}
 
@@ -553,7 +551,7 @@ class Comment(BlockchainObject):
         pending_rewards = False
         active_votes_list = self.get_votes()
         curator_reward_factor = 0.5
-        
+
         if "total_vote_weight" in self:
             total_vote_weight = self["total_vote_weight"]
         active_votes_json_list = []
@@ -563,11 +561,11 @@ class Comment(BlockchainObject):
                 active_votes_json_list.append(vote.json())
             else:
                 active_votes_json_list.append(vote.json())
-        
+
         total_vote_weight = 0
         for vote in active_votes_json_list:
             total_vote_weight += vote["weight"]
-            
+
         if not self.is_pending():
             if pending_payout_SBD or median_hist is None:
                 max_rewards = Amount(self["curator_payout_value"], blockchain_instance=self.blockchain)
@@ -699,7 +697,7 @@ class Comment(BlockchainObject):
 
         """
         if weight < 0:
-            raise ValueError("Weight must be >= 0.")        
+            raise ValueError("Weight must be >= 0.")
         last_payout = self.get('last_payout', None)
         if last_payout is not None:
             if formatToTimeStamp(last_payout) > 0:
@@ -855,7 +853,7 @@ class RecentReplies(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         if not self.blockchain.is_connected():
             return None
@@ -879,7 +877,7 @@ class RecentByPath(list):
         :param Steem blockchain_instance: Steem() instance to use when accesing a RPC
     """
     def __init__(self, path="trending", category=None, lazy=False, full=True, blockchain_instance=None, **kwargs):
-        
+
         super(RecentByPath, self).__init__(RankedPosts(sort=path, tag=category))
 
 
@@ -899,7 +897,7 @@ class RankedPosts(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         if not self.blockchain.is_connected():
             return None
@@ -909,7 +907,7 @@ class RankedPosts(list):
             api_limit = 100
         last_n = -1
         while len(comments) < limit and last_n != len(comments):
-            last_n = len(comments)        
+            last_n = len(comments)
             self.blockchain.rpc.set_next_node_on_empty_reply(False)
             posts = self.blockchain.rpc.get_ranked_posts({"sort": sort, "tag": tag, "observer": observer,
                                                           "limit": api_limit, "start_author": start_author,
@@ -949,7 +947,7 @@ class AccountPosts(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         if not self.blockchain.is_connected():
             return None
@@ -965,12 +963,12 @@ class AccountPosts(list):
                                                           "limit": api_limit, "start_author": start_author,
                                                           "start_permlink": start_permlink}, api="bridge")
             if posts is None:
-                continue            
+                continue
             for post in posts:
                 if len(comments) > 0 and comments[-1]["author"] == post["author"] and comments[-1]["permlink"] == post["permlink"]:
                     continue
                 if len(comments) >= limit:
-                    continue                
+                    continue
                 if raw_data:
                     comments.append(post)
                 else:

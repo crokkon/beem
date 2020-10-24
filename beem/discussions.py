@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from .instance import shared_blockchain_instance
-from .account import Account
 from .comment import Comment
-from .utils import resolve_authorperm
 import logging
 log = logging.getLogger(__name__)
 
@@ -64,7 +62,7 @@ class Discussions(object):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.lazy = lazy
         self.use_appbase = use_appbase
@@ -210,7 +208,7 @@ class Discussions_by_trending(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
@@ -268,7 +266,7 @@ class Discussions_by_author_before_date(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
@@ -315,7 +313,7 @@ class Comment_discussions_by_payout(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
@@ -366,13 +364,13 @@ class Post_discussions_by_payout(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]        
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -417,13 +415,13 @@ class Discussions_by_created(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]        
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -468,13 +466,13 @@ class Discussions_by_active(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]        
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -520,13 +518,13 @@ class Discussions_by_cashout(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]        
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -571,13 +569,13 @@ class Discussions_by_votes(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]        
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -622,13 +620,13 @@ class Discussions_by_children(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]         
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -673,13 +671,13 @@ class Discussions_by_hot(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]        
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -724,7 +722,7 @@ class Discussions_by_feed(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         reduced_query = {}
@@ -747,7 +745,7 @@ class Discussions_by_feed(list):
                     x
                     for x in posts
                 ]
-            )            
+            )
         else:
             super(Discussions_by_feed, self).__init__(
                 [
@@ -779,13 +777,13 @@ class Discussions_by_blog(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]     
+                reduced_query[key] = discussion_query[key]
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
             self.blockchain.rpc.set_next_node_on_empty_reply(True)
@@ -837,12 +835,12 @@ class Discussions_by_comments(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["start_author", "start_permlink", "limit"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]         
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -857,7 +855,7 @@ class Discussions_by_comments(list):
                     Comment(x, lazy=lazy, blockchain_instance=self.blockchain)
                     for x in posts
                 ]
-            )            
+            )
         else:
             super(Discussions_by_comments, self).__init__(
                 [
@@ -889,13 +887,13 @@ class Discussions_by_promoted(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         reduced_query = {}
         for key in ["tag", "limit", "filter_tags", "select_authors", "select_tags", "truncate_body",
                     "start_author", "start_permlink"]:
             if key in discussion_query:
-                reduced_query[key] = discussion_query[key]        
+                reduced_query[key] = discussion_query[key]
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
         if self.blockchain.rpc.get_use_appbase() and use_appbase:
@@ -940,7 +938,7 @@ class Replies_by_last_update(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []
@@ -992,7 +990,7 @@ class Trending_tags(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.blockchain.rpc.set_next_node_on_empty_reply(self.blockchain.rpc.get_use_appbase() and use_appbase)
         posts = []

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.py23 import integer_types, string_types
 from fractions import Fraction
 from beem.instance import shared_blockchain_instance
 from .exceptions import InvalidAssetException
-from .account import Account
-from .amount import Amount, quantize
+from .amount import Amount
 from .asset import Asset
 from .utils import formatTimeString
-from .utils import parse_time, assets_from_string
+from .utils import assets_from_string
 from decimal import Decimal
 
 
@@ -95,7 +94,6 @@ class Price(dict):
         if price == "":
             price = None
         if (price is not None and isinstance(price, string_types) and not base and not quote):
-            import re
             price, assets = price.split(" ")
             base_symbol, quote_symbol = assets_from_string(assets)
             base = Asset(base_symbol, blockchain_instance=self.blockchain)
@@ -148,7 +146,6 @@ class Price(dict):
 
         elif ((isinstance(price, float) or isinstance(price, integer_types) or isinstance(price, Decimal)) and
                 isinstance(base, string_types)):
-            import re
             base_symbol, quote_symbol = assets_from_string(base)
             base = Asset(base_symbol, blockchain_instance=self.blockchain)
             quote = Asset(quote_symbol, blockchain_instance=self.blockchain)

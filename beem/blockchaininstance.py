@@ -5,12 +5,10 @@ import re
 import os
 import math
 import ast
-import time
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
-from datetime import datetime, timedelta, date
+from datetime import datetime
 from beemapi.noderpc import NodeRPC
 from beemgraphenebase.account import PrivateKey, PublicKey
-from beembase import transactions, operations
+from beembase import operations
 from beemgraphenebase.chains import known_chains
 from .storage import get_default_config_store
 from .account import Account
@@ -24,7 +22,7 @@ from .exceptions import (
 from .wallet import Wallet
 from .hivesigner import HiveSigner
 from .transactionbuilder import TransactionBuilder
-from .utils import formatTime, resolve_authorperm, derive_permlink, sanitize_permlink, remove_from_dict, addTzInfo, formatToTimeStamp
+from .utils import resolve_authorperm, derive_permlink, sanitize_permlink, remove_from_dict
 from beem.constants import STEEM_VOTE_REGENERATION_SECONDS, STEEM_100_PERCENT, STEEM_1_PERCENT, STEEM_RC_REGEN_TIME, CURVE_CONSTANT, \
      CURVE_CONSTANT_X4, SQUARED_CURVE_CONSTANT
 
@@ -176,7 +174,7 @@ class BlockChainInstance(object):
         self.steemconnect = kwargs.get("steemconnect", None)
         self.use_sc2 = bool(kwargs.get("use_sc2", False))
         self.hivesigner = kwargs.get("hivesigner", None)
-        self.use_hs = bool(kwargs.get("use_hs", False))        
+        self.use_hs = bool(kwargs.get("use_hs", False))
         self.blocking = kwargs.get("blocking", False)
         self.custom_chains = kwargs.get("custom_chains", {})
         self.use_ledger = bool(kwargs.get("use_ledger", False))
@@ -206,13 +204,13 @@ class BlockChainInstance(object):
         if self.steemconnect is not None and not isinstance(self.steemconnect, (HiveSigner)):
             raise ValueError("steemconnect musst be SteemConnect object")
         if self.hivesigner is not None and not isinstance(self.hivesigner, (HiveSigner)):
-            raise ValueError("hivesigner musst be HiveSigner object")        
+            raise ValueError("hivesigner musst be HiveSigner object")
         if self.steemconnect is not None and not self.use_sc2:
             self.use_sc2 = True
         elif self.hivesigner is None and self.use_hs:
             self.hivesigner = HiveSigner(blockchain_instance=self, **kwargs)
         elif self.hivesigner is not None and not self.use_hs:
-            self.use_hs = True            
+            self.use_hs = True
 
     # -------------------------------------------------------------------------
     # Basic Calls
@@ -274,7 +272,7 @@ class BlockChainInstance(object):
                      'config': None,
                      'last_refresh_config': None,
                      'reward_funds': None,
-                     'last_refresh_reward_funds': None}        
+                     'last_refresh_reward_funds': None}
 
     def refresh_data(self, chain_property, force_refresh=False, data_refresh_time_seconds=None):
         """ Read and stores steem blockchain parameters
@@ -292,20 +290,20 @@ class BlockChainInstance(object):
             if not self.offline:
                 if self.data['last_refresh_dynamic_global_properties'] is not None and not force_refresh and self.data["last_node"] == self.rpc.url:
                     if (datetime.utcnow() - self.data['last_refresh_dynamic_global_properties']).total_seconds() < self.data_refresh_time_seconds:
-                        return            
+                        return
                 self.data['last_refresh_dynamic_global_properties'] = datetime.utcnow()
                 self.data['last_refresh'] = datetime.utcnow()
-                self.data["last_node"] = self.rpc.url      
+                self.data["last_node"] = self.rpc.url
             self.data["dynamic_global_properties"] = self.get_dynamic_global_properties(False)
         elif chain_property == "feed_history":
             if not self.offline:
                 if self.data['last_refresh_feed_history'] is not None and not force_refresh and self.data["last_node"] == self.rpc.url:
                     if (datetime.utcnow() - self.data['last_refresh_feed_history']).total_seconds() < self.data_refresh_time_seconds:
                         return
-            
+
                 self.data['last_refresh_feed_history'] = datetime.utcnow()
                 self.data['last_refresh'] = datetime.utcnow()
-                self.data["last_node"] = self.rpc.url             
+                self.data["last_node"] = self.rpc.url
             try:
                 self.data['feed_history'] = self.get_feed_history(False)
             except:
@@ -319,7 +317,7 @@ class BlockChainInstance(object):
 
                 self.data['last_refresh_hardfork_properties'] = datetime.utcnow()
                 self.data['last_refresh'] = datetime.utcnow()
-                self.data["last_node"] = self.rpc.url             
+                self.data["last_node"] = self.rpc.url
             try:
                 self.data['hardfork_properties'] = self.get_hardfork_properties(False)
             except:
@@ -331,7 +329,7 @@ class BlockChainInstance(object):
                         return
                 self.data['last_refresh_witness_schedule'] = datetime.utcnow()
                 self.data['last_refresh'] = datetime.utcnow()
-                self.data["last_node"] = self.rpc.url             
+                self.data["last_node"] = self.rpc.url
             self.data['witness_schedule'] = self.get_witness_schedule(False)
         elif chain_property == "config":
             if not self.offline:
@@ -340,7 +338,7 @@ class BlockChainInstance(object):
                         return
                 self.data['last_refresh_config'] = datetime.utcnow()
                 self.data['last_refresh'] = datetime.utcnow()
-                self.data["last_node"] = self.rpc.url             
+                self.data["last_node"] = self.rpc.url
             self.data['config'] = self.get_config(False)
             self.data['network'] = self.get_network(False, config=self.data['config'])
         elif chain_property == "reward_funds":
@@ -351,7 +349,7 @@ class BlockChainInstance(object):
 
                 self.data['last_refresh_reward_funds'] = datetime.utcnow()
                 self.data['last_refresh'] = datetime.utcnow()
-                self.data["last_node"] = self.rpc.url             
+                self.data["last_node"] = self.rpc.url
             self.data['reward_funds'] = self.get_reward_funds(False)
         else:
             raise ValueError("%s is not unkown" % str(chain_property))
@@ -620,12 +618,12 @@ class BlockChainInstance(object):
         post_rshares_normalized = post_rshares + CURVE_CONSTANT
         post_rshares_curve = (post_rshares_normalized * post_rshares_normalized - SQUARED_CURVE_CONSTANT) / (post_rshares + CURVE_CONSTANT_X4)
         post_rshares_curve_after_vote = vote_claim + post_rshares_curve
-        
+
         a = 1
         b = (-post_rshares_curve_after_vote + 2 * post_rshares_normalized)
         c = (post_rshares_normalized * post_rshares_normalized - SQUARED_CURVE_CONSTANT)  - post_rshares_curve_after_vote * (post_rshares + CURVE_CONSTANT_X4)
         # (effective_vote_rshares * effective_vote_rshares) + effective_vote_rshares * (-post_rshares_curve_after_vote + 2 * post_rshares_normalized) + ((post_rshares_normalized * post_rshares_normalized - SQUARED_CURVE_CONSTANT)  - post_rshares_curve_after_vote * (post_rshares + CURVE_CONSTANT_X4)) = 0
-        
+
         x1 = (-b + math.sqrt(b*b-4*a*c)) / (2*a)
         x2 = (-b - math.sqrt(b*b-4*a*c)) / (2*a)
         if x1 >= 0:
@@ -1068,7 +1066,7 @@ class BlockChainInstance(object):
                 "Not creator account given. Define it with " +
                 "creator=x, or set the default_account using beempy")
         creator = Account(creator, blockchain_instance=self)
-        replace_hive_by_steem = self.get_replace_hive_by_steem()        
+        replace_hive_by_steem = self.get_replace_hive_by_steem()
         op = {
             "fee": Amount(fee, blockchain_instance=self),
             "creator": creator["name"],
@@ -1249,7 +1247,7 @@ class BlockChainInstance(object):
             addaccount = Account(k, blockchain_instance=self)
             posting_accounts_authority.append([addaccount["name"], 1])
         if combine_with_claim_account:
-            replace_hive_by_steem = self.get_replace_hive_by_steem()              
+            replace_hive_by_steem = self.get_replace_hive_by_steem()
             op = {
                 "fee": Amount(fee, blockchain_instance=self),
                 "creator": creator["name"],
@@ -1453,7 +1451,7 @@ class BlockChainInstance(object):
             required_fee_steem = Amount(props["account_creation_fee"], blockchain_instance=self)
         else:
             required_fee_steem = Amount(props["account_creation_fee"], blockchain_instance=self) * 30
-        replace_hive_by_steem = self.get_replace_hive_by_steem()      
+        replace_hive_by_steem = self.get_replace_hive_by_steem()
         op = {
             "fee": required_fee_steem,
             "creator": creator["name"],
@@ -1723,7 +1721,7 @@ class BlockChainInstance(object):
             raise e
         if "account_creation_fee" in props:
             props["account_creation_fee"] = Amount(props["account_creation_fee"], blockchain_instance=self)
-        replace_hive_by_steem = self.get_replace_hive_by_steem()       
+        replace_hive_by_steem = self.get_replace_hive_by_steem()
         op = operations.Witness_update(
             **{
                 "owner": account["name"],
@@ -2169,7 +2167,7 @@ class BlockChainInstance(object):
                     options.get("beneficiaries", []),
                     "prefix": self.prefix,
                     "replace_hive_by_steem": False,
-                })            
+                })
         else:
             comment_op = operations.Comment_options(
                 **{

@@ -1,23 +1,13 @@
 # -*- coding: utf-8 -*-
-import pytz
 import json
-from datetime import datetime, timedelta, date, time
-import math
-import random
+from datetime import datetime, date, time
 import logging
 from prettytable import PrettyTable
 from beem.instance import shared_blockchain_instance
 from .exceptions import AccountDoesNotExistsException, OfflineHasNoRPCException
-from beemapi.exceptions import ApiNotSupported, MissingRequiredActiveAuthority
 from .blockchainobject import BlockchainObject
-from .blockchain import Blockchain
-from .utils import formatTimeString, formatTimedelta, remove_from_dict, reputation_to_score, addTzInfo
-from beem.amount import Amount
-from beembase import operations
-from beem.rc import RC
-from beemgraphenebase.account import PrivateKey, PublicKey, PasswordKey
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
-from beem.constants import STEEM_VOTE_REGENERATION_SECONDS, STEEM_1_PERCENT, STEEM_100_PERCENT, STEEM_VOTING_MANA_REGENERATION_SECONDS
+from .utils import formatTimeString, addTzInfo
+from beemgraphenebase.py23 import integer_types, string_types
 log = logging.getLogger(__name__)
 
 
@@ -124,7 +114,7 @@ class Community(BlockchainObject):
             if p in community and isinstance(community.get(p), string_types):
                 community[p] = int(community.get(p, 0))
         parse_times = [
-            "created_at"            
+            "created_at"
         ]
         for p in parse_times:
             if p in community and isinstance(community.get(p), string_types):
@@ -147,7 +137,7 @@ class Community(BlockchainObject):
                 output[p] = str(output[p])
 
         parse_times = [
-            "created_at",        
+            "created_at",
         ]
         for p in parse_times:
             if p in output:
@@ -164,7 +154,7 @@ class Community(BlockchainObject):
         community = self["name"]
         if not self.blockchain.is_connected():
             raise OfflineHasNoRPCException("No RPC available in offline mode!")
-        self.blockchain.rpc.set_next_node_on_empty_reply(False)        
+        self.blockchain.rpc.set_next_node_on_empty_reply(False)
         return self.blockchain.rpc.list_community_roles({"community": community}, api="bridge")
 
     def get_subscribers(self):
@@ -173,7 +163,7 @@ class Community(BlockchainObject):
         community = self["name"]
         if not self.blockchain.is_connected():
             raise OfflineHasNoRPCException("No RPC available in offline mode!")
-        self.blockchain.rpc.set_next_node_on_empty_reply(False)        
+        self.blockchain.rpc.set_next_node_on_empty_reply(False)
         return self.blockchain.rpc.list_subscribers({"community": community}, api="bridge")
 
     def get_activities(self, limit=100, last_id=None):
@@ -182,7 +172,7 @@ class Community(BlockchainObject):
         community = self["name"]
         if not self.blockchain.is_connected():
             raise OfflineHasNoRPCException("No RPC available in offline mode!")
-        self.blockchain.rpc.set_next_node_on_empty_reply(False)        
+        self.blockchain.rpc.set_next_node_on_empty_reply(False)
         return self.blockchain.rpc.account_notifications({"account": community, "limit": limit, "last_id": last_id}, api="bridge")
 
     def get_ranked_posts(self, observer=None, limit=100, start_author=None, start_permlink=None, sort="created"):
@@ -191,7 +181,7 @@ class Community(BlockchainObject):
         community = self["name"]
         if not self.blockchain.is_connected():
             raise OfflineHasNoRPCException("No RPC available in offline mode!")
-        self.blockchain.rpc.set_next_node_on_empty_reply(False)        
+        self.blockchain.rpc.set_next_node_on_empty_reply(False)
         return self.blockchain.rpc.get_ranked_posts({"tag": community, "observer": observer,
                                                      "limit": limit, "start_author": start_author,
                                                      "start_permlink": start_permlink, "sort":sort}, api="bridge")
@@ -292,7 +282,7 @@ class Community(BlockchainObject):
             :param str about: about
             :param bool is_nsfw: is_nsfw
             :param str description: description
-            :param str flag_text: flag_text            
+            :param str flag_text: flag_text
             :param str admin_account: Account who broadcast this, (admin or higher)
 
         """
@@ -388,7 +378,7 @@ class Community(BlockchainObject):
             }
         ]
         return self.blockchain.custom_json(
-            "community", json_body, required_posting_auths=[mod_account])    
+            "community", json_body, required_posting_auths=[mod_account])
 
     def flag_post(self, account, permlink, notes, reporter):
         """ Suggest a post for the review queue
@@ -410,7 +400,7 @@ class Community(BlockchainObject):
             }
         ]
         return self.blockchain.custom_json(
-            "community", json_body, required_posting_auths=[reporter])        
+            "community", json_body, required_posting_auths=[reporter])
 
 
 class CommunityObject(list):
@@ -435,7 +425,7 @@ class Communities(CommunityObject):
             accessing a RPCcreator = Account(creator, blockchain_instance=self)
     """
     def __init__(self, sort="rank", observer=None, last=None, limit=100, lazy=False, full=True, blockchain_instance=None, **kwargs):
-        
+
         if blockchain_instance is None:
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]

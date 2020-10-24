@@ -3,16 +3,15 @@ import random
 import pytz
 import logging
 from datetime import datetime, timedelta
-import time
 from beem.instance import shared_blockchain_instance
 from .utils import (
-    formatTimeFromNow, formatTime, formatTimeString, assets_from_string, parse_time, addTzInfo)
+    formatTimeFromNow, formatTimeString, assets_from_string, addTzInfo)
 from .asset import Asset
 from .amount import Amount
 from .price import Price, Order, FilledOrder
 from .account import Account
 from beembase import operations
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.py23 import string_types
 REQUEST_MODULE = None
 if not REQUEST_MODULE:
     try:
@@ -757,12 +756,12 @@ class Market(dict):
         ]
         cnt = 0
         while len(prices) == 0 and cnt < 5:
-            cnt += 1        
+            cnt += 1
             try:
                 responses = list(requests.get(u, timeout=30) for u in urls)
             except Exception as e:
                 log.debug(str(e))
-    
+
             for r in [x for x in responses
                       if hasattr(x, "status_code") and x.status_code == 200 and x.json()]:
                 try:
@@ -838,7 +837,7 @@ class Market(dict):
                 responses = list(requests.get(u, headers=headers, timeout=30) for u in urls)
             except Exception as e:
                 log.debug(str(e))
-    
+
             for r in [x for x in responses
                       if hasattr(x, "status_code") and x.status_code == 200 and x.json()]:
                 try:
@@ -871,7 +870,7 @@ class Market(dict):
                         if 'usd_24h_vol' in data:
                             volume = float(data['usd_24h_vol'])
                         else:
-                            volume = 1                
+                            volume = 1
                         prices['coingecko'] = {
                             'price': float(data['btc']),
                             'volume': volume}
@@ -906,12 +905,12 @@ class Market(dict):
                    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36'}
         cnt = 0
         while len(prices) == 0 and cnt < 5:
-            cnt += 1        
+            cnt += 1
             try:
                 responses = list(requests.get(u, headers=headers, timeout=30) for u in urls)
             except Exception as e:
                 log.debug(str(e))
-    
+
             for r in [x for x in responses
                       if hasattr(x, "status_code") and x.status_code == 200 and x.json()]:
                 try:

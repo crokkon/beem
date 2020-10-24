@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 from beem.instance import shared_blockchain_instance
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.py23 import integer_types, string_types
 from .account import Account
 from .amount import Amount
 from .exceptions import WitnessDoesNotExistsException
 from .blockchainobject import BlockchainObject
 from .utils import formatTimeString
-from datetime import datetime, timedelta, date
-from beembase import transactions, operations
-from beemgraphenebase.account import PrivateKey, PublicKey
+from datetime import datetime, date
+from beembase import operations
 import pytz
 from prettytable import PrettyTable
 
@@ -44,7 +43,7 @@ class Witness(BlockchainObject):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         if isinstance(owner, dict):
             owner = self._parse_json_data(owner)

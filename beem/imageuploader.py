@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
-import logging
-import json
 import io
-import collections
-import hashlib
-from binascii import hexlify, unhexlify
+from binascii import hexlify
 import requests
 from .instance import shared_blockchain_instance
 from beem.account import Account
-from beemgraphenebase.py23 import integer_types, string_types, text_type, py23_bytes
-from beemgraphenebase.account import PrivateKey
-from beemgraphenebase.ecdsasig import sign_message, verify_message
+from beemgraphenebase.py23 import string_types, py23_bytes
+from beemgraphenebase.ecdsasig import sign_message
 
 
 class ImageUploader(object):
@@ -27,7 +22,7 @@ class ImageUploader(object):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.steem = blockchain_instance or shared_blockchain_instance()
         if self.steem.is_hive and base_url == "https://steemitimages.com":
             self.base_url = "https://images.hive.blog"

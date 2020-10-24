@@ -1,17 +1,11 @@
 # -*- coding: utf-8 -*-
-import logging
-import json
 from .instance import shared_blockchain_instance
 from beem.constants import state_object_size_info, resource_execution_time, EXEC_FOLLOW_CUSTOM_OP_SCALE
-import hashlib
-from binascii import hexlify, unhexlify
-import os
-from pprint import pprint
-from beem.amount import Amount
+from binascii import hexlify
 from beembase import operations
 from beembase.objects import Operation
 from beembase.signedtransactions import Signed_Transaction
-from beemgraphenebase.py23 import py23_bytes, bytes_types
+from beemgraphenebase.py23 import py23_bytes
 
 
 class RC(object):

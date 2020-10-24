@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 import time
 import hashlib
 import json
@@ -7,22 +6,20 @@ import math
 from threading import Thread, Event
 from time import sleep
 import logging
-from datetime import datetime, timedelta
-from .utils import formatTimeString, addTzInfo
+from datetime import timedelta
+from .utils import addTzInfo
 from .block import Block, BlockHeader
-from beemapi.node import Nodes
 from .exceptions import BatchedCallsNotSupported, BlockDoesNotExistsException, BlockWaitTimeExceeded, OfflineHasNoRPCException
-from beemapi.exceptions import NumRetriesReached, UnknownTransaction
+from beemapi.exceptions import UnknownTransaction
 from beemgraphenebase.py23 import py23_bytes
 from beem.instance import shared_blockchain_instance
-from .amount import Amount
 import beem as stm
 log = logging.getLogger(__name__)
 from queue import Queue
 FUTURES_MODULE = None
 if not FUTURES_MODULE:
     try:
-        from concurrent.futures import ThreadPoolExecutor, wait, as_completed
+        from concurrent.futures import ThreadPoolExecutor, as_completed
         FUTURES_MODULE = "futures"
         # FUTURES_MODULE = None
     except ImportError:
@@ -221,7 +218,7 @@ class Blockchain(object):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
 
         if mode == "irreversible":
@@ -313,7 +310,7 @@ class Blockchain(object):
                       when instantiating from this class.
 
             .. code-block:: python
-        
+
                 >>> from beem.blockchain import Blockchain
                 >>> from datetime import datetime
                 >>> blockchain = Blockchain()
@@ -339,10 +336,10 @@ class Blockchain(object):
             if block_number > last_block.identifier:
                 block_number = last_block.identifier
             block_time_diff = timedelta(seconds=10)
-            
+
             last_block_time_diff_seconds = 10
             second_last_block_time_diff_seconds = 10
-            
+
             while block_time_diff.total_seconds() > self.block_interval or block_time_diff.total_seconds() < -self.block_interval:
                 block = BlockHeader(block_number, blockchain_instance=self.blockchain)
                 second_last_block_time_diff_seconds = last_block_time_diff_seconds

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import logging
-import os
 from beemgraphenebase.account import PrivateKey
 from beem.instance import shared_blockchain_instance
 from .account import Account
@@ -11,7 +10,7 @@ from .exceptions import (
     OfflineHasNoRPCException,
     AccountDoesNotExistsException
 )
-from beemstorage.exceptions import KeyAlreadyInStoreException, WalletLocked
+from beemstorage.exceptions import KeyAlreadyInStoreException
 
 
 log = logging.getLogger(__name__)
@@ -86,7 +85,7 @@ class Wallet(object):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
 
         # Compatibility after name change from wif->keys
@@ -153,7 +152,7 @@ class Wallet(object):
         """
         lock_ok = False
         if self.store.is_encrypted():
-            lock_ok =  self.store.lock()       
+            lock_ok =  self.store.lock()
         return lock_ok
 
     def unlocked(self):
@@ -161,7 +160,7 @@ class Wallet(object):
         """
         unlocked = True
         if self.store.is_encrypted():
-            unlocked = not self.store.locked()   
+            unlocked = not self.store.locked()
         return unlocked
 
     def locked(self):

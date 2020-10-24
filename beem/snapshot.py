@@ -3,16 +3,14 @@ import pytz
 import json
 import re
 from datetime import datetime, timedelta, date, time
-import math
-import random
 import logging
 from bisect import bisect_left
-from beem.utils import formatTimeString, formatTimedelta, remove_from_dict, reputation_to_score, addTzInfo, parse_time
+from beem.utils import formatTimeString, reputation_to_score, addTzInfo, parse_time
 from beem.amount import Amount
 from beem.account import Account
 from beem.vote import Vote
 from beem.instance import shared_blockchain_instance
-from beem.constants import STEEM_VOTE_REGENERATION_SECONDS, STEEM_1_PERCENT, STEEM_100_PERCENT
+from beem.constants import STEEM_VOTE_REGENERATION_SECONDS, STEEM_100_PERCENT
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +27,7 @@ class AccountSnapshot(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]          
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.account = Account(account, blockchain_instance=self.blockchain)
         self.reset()
@@ -154,7 +152,7 @@ class AccountSnapshot(list):
         else:
             sp_in = self.blockchain.vests_to_hp(sum_in, timestamp=ts)
             sp_out = self.blockchain.vests_to_hp(sum_out, timestamp=ts)
-            sp_own = self.blockchain.vests_to_hp(own, timestamp=ts)            
+            sp_own = self.blockchain.vests_to_hp(own, timestamp=ts)
         sp_eff = sp_own + sp_in - sp_out
         return {"timestamp": ts, "vests": own, "delegated_vests_in": din, "delegated_vests_out": dout,
                 "sp_own": sp_own, "sp_eff": sp_eff, "steem": steem, "sbd": sbd, "index": index}
@@ -479,7 +477,7 @@ class AccountSnapshot(list):
                 sp_in = self.blockchain.vests_to_hp(sum_in, timestamp=ts)
                 sp_out = self.blockchain.vests_to_hp(sum_out, timestamp=ts)
                 sp_own = self.blockchain.vests_to_hp(own, timestamp=ts)
-                
+
             sp_eff = sp_own + sp_in - sp_out
             self.own_sp.append(sp_own)
             self.eff_sp.append(sp_eff)

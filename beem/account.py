@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import pytz
 import json
 from datetime import datetime, timedelta, date, time
-import math
 import random
 import logging
 from prettytable import PrettyTable
@@ -15,8 +13,8 @@ from .utils import formatTimeString, formatTimedelta, remove_from_dict, reputati
 from beem.amount import Amount
 from beembase import operations
 from beem.rc import RC
-from beemgraphenebase.account import PrivateKey, PublicKey, PasswordKey
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.account import PublicKey, PasswordKey
+from beemgraphenebase.py23 import integer_types, string_types
 from beem.constants import STEEM_VOTE_REGENERATION_SECONDS, STEEM_1_PERCENT, STEEM_100_PERCENT, STEEM_VOTING_MANA_REGENERATION_SECONDS
 log = logging.getLogger(__name__)
 
@@ -148,7 +146,7 @@ class Account(BlockchainObject):
             "savings_sbd_seconds_last_update", "savings_sbd_last_interest_payment", "next_vesting_withdrawal",
             "last_market_bandwidth_update", "last_post", "last_root_post", "last_bandwidth_update",
             "hbd_seconds_last_update", "hbd_last_interest_payment", "savings_hbd_seconds_last_update",
-            "savings_hbd_last_interest_payment"            
+            "savings_hbd_last_interest_payment"
         ]
         for p in parse_times:
             if p in account and isinstance(account.get(p), string_types):
@@ -162,7 +160,7 @@ class Account(BlockchainObject):
             "reward_sbd_balance",
             "hbd_balance",
             "savings_hbd_balance",
-            "reward_hbd_balance",            
+            "reward_hbd_balance",
             "reward_steem_balance",
             "reward_hive_balance",
             "reward_vesting_balance",
@@ -206,7 +204,7 @@ class Account(BlockchainObject):
             "savings_sbd_seconds_last_update", "savings_sbd_last_interest_payment", "next_vesting_withdrawal",
             "last_market_bandwidth_update", "last_post", "last_root_post", "last_bandwidth_update",
             "hbd_seconds_last_update", "hbd_last_interest_payment", "savings_hbd_seconds_last_update",
-            "savings_hbd_last_interest_payment"            
+            "savings_hbd_last_interest_payment"
         ]
         for p in parse_times:
             if p in output:
@@ -225,7 +223,7 @@ class Account(BlockchainObject):
             "hbd_balance",
             "savings_hbd_balance",
             "reward_hbd_balance",
-            "reward_hive_balance",            
+            "reward_hive_balance",
             "reward_vesting_balance",
             "reward_vesting_steem",
             "vesting_shares",
@@ -472,7 +470,7 @@ class Account(BlockchainObject):
             props = self.blockchain.get_chain_properties()
             required_fee_token = Amount(props["account_creation_fee"], blockchain_instance=self.blockchain)
             max_mana = int(self.blockchain.token_power_to_vests(required_fee_token) / 4)
-              
+
         last_mana = int(self["downvote_manabar"]["current_mana"])
         last_update_time = self["downvote_manabar"]["last_update_time"]
         last_update = datetime.utcfromtimestamp(last_update_time)
@@ -1126,7 +1124,7 @@ class Account(BlockchainObject):
         if account is None:
             account = self["name"]
         elif isinstance(account, Account):
-            account = account["name"]        
+            account = account["name"]
         if not self.blockchain.is_connected():
             raise OfflineHasNoRPCException("No RPC available in offline mode!")
         self.blockchain.rpc.set_next_node_on_empty_reply(True)
@@ -1317,7 +1315,7 @@ class Account(BlockchainObject):
             interest_rate = self.blockchain.get_dynamic_global_properties()[
                 "hbd_interest_rate"] / 100  # percent
             interest_amount = (interest_rate / 100) * int(
-                int(self["hbd_seconds"]) / (60 * 60 * 24 * 356)) * 10**-3            
+                int(self["hbd_seconds"]) / (60 * 60 * 24 * 356)) * 10**-3
         return {
             "interest": interest_amount,
             "last_payment": last_payment,
@@ -1745,7 +1743,7 @@ class Account(BlockchainObject):
 
     def get_account_votes(self, account=None, start_author="", start_permlink="", limit=1000, start_date=None):
         """ Returns all votes that the account has done
-            
+
             :rtype: list
 
             .. code-block:: python
@@ -2064,7 +2062,7 @@ class Account(BlockchainObject):
         else:
             txs_list = txs
         for item in txs_list:
-            item_index, event = item        
+            item_index, event = item
             if start and isinstance(start, (datetime, date, time)):
                 timediff = start - formatTimeString(event["timestamp"])
                 if timediff.total_seconds() * float(order) > 0:
@@ -2468,7 +2466,7 @@ class Account(BlockchainObject):
             .. note:: what can be one of the following on HIVE:
             blog, ignore, blacklist, unblacklist, follow_blacklist,
             unfollow_blacklist, follow_muted, unfollow_muted
-            
+
             :param str/list other: Follow this account / accounts (only hive)
             :param list what: List of states to follow.
                 ``['blog']`` means to follow ``other``,
@@ -2856,7 +2854,7 @@ class Account(BlockchainObject):
             request_id = int(request_id)
         else:
             request_id = random.getrandbits(32)
-        replace_hive_by_steem = self.blockchain.get_replace_hive_by_steem()      
+        replace_hive_by_steem = self.blockchain.get_replace_hive_by_steem()
         op = operations.Convert(
             **{
                 "owner": account["name"],
@@ -2994,7 +2992,7 @@ class Account(BlockchainObject):
                              reward_steem=0,
                              reward_sbd=0,
                              reward_hive=0,
-                             reward_hbd=0,                             
+                             reward_hbd=0,
                              reward_vests=0,
                              account=None, **kwargs):
         """ Claim reward balances.
@@ -3024,7 +3022,7 @@ class Account(BlockchainObject):
         reward_steem = self._check_amount(reward_steem + reward_hive, self.blockchain.token_symbol)
         reward_sbd = self._check_amount(reward_sbd + reward_hbd, self.blockchain.backed_token_symbol)
         reward_vests = self._check_amount(reward_vests, self.blockchain.vest_token_symbol)
-        
+
         reward_token = "reward_steem"
         reward_backed_token = "reward_sbd"
         replace_hive_by_steem = self.blockchain.get_replace_hive_by_steem()
@@ -3045,7 +3043,7 @@ class Account(BlockchainObject):
                         "reward_vests": reward_vests,
                         "prefix": self.blockchain.prefix,
                         "replace_hive_by_steem": replace_hive_by_steem
-                    })         
+                    })
             else:
                 reward_steem = account.balances["rewards"][0]
                 reward_vests = account.balances["rewards"][1]
@@ -3644,7 +3642,7 @@ class Accounts(AccountsObject):
             accessing a RPCcreator = Account(creator, blockchain_instance=self)
     """
     def __init__(self, name_list, batch_limit=100, lazy=False, full=True, blockchain_instance=None, **kwargs):
-        
+
         if blockchain_instance is None:
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]

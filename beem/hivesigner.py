@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 try:
-    from urllib.parse import urlparse, urlencode, urljoin
+    from urllib.parse import urlencode, urljoin
 except ImportError:
-    from urlparse import urlparse, urljoin
+    from urlparse import urljoin
     from urllib import urlencode
 import requests
 import logging
@@ -14,7 +14,7 @@ from beem.exceptions import (
     MissingKeyError,
     WalletExists
 )
-from beemstorage.exceptions import KeyAlreadyInStoreException, WalletLocked
+from beemstorage.exceptions import KeyAlreadyInStoreException
 
 log = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ class HiveSigner(object):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.access_token = None
         config = self.blockchain.config
@@ -146,7 +146,7 @@ class HiveSigner(object):
         """
         lock_ok = False
         if self.store.is_encrypted():
-            lock_ok =  self.store.lock()       
+            lock_ok =  self.store.lock()
         return lock_ok
 
     def unlocked(self):
@@ -154,7 +154,7 @@ class HiveSigner(object):
         """
         unlocked = True
         if self.store.is_encrypted():
-            unlocked = not self.store.locked()   
+            unlocked = not self.store.locked()
         return unlocked
 
     def locked(self):
@@ -204,7 +204,7 @@ class HiveSigner(object):
         """ Obtain the private token for a given public name
 
             :param str name: Public name
-        """      
+        """
         if str(name) not in self.store:
             raise MissingKeyError
         return self.store.getPrivateKeyForPublicKey(str(name))

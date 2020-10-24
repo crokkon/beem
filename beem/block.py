@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta, date
+from datetime import datetime, date
 import json
 from .exceptions import BlockDoesNotExistsException
-from .utils import parse_time, formatTimeString
+from .utils import formatTimeString
 from .blockchainobject import BlockchainObject
 from beemapi.exceptions import ApiNotSupported
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.py23 import string_types
 
 
 class Block(BlockchainObject):

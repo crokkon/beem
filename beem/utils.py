@@ -3,11 +3,10 @@ import re
 import json
 import time as timenow
 import math
-from datetime import datetime, tzinfo, timedelta, date, time
+from datetime import datetime, timedelta, date, time
 import pytz
-import difflib
+from difflib import unified_diff
 from ruamel.yaml import YAML
-import difflib
 
 timeFormat = "%Y-%m-%dT%H:%M:%S"
 # https://github.com/matiasb/python-unidiff/blob/master/unidiff/constants.py#L37
@@ -295,7 +294,7 @@ def remove_from_dict(obj, keys=list(), keep_keys=True):
 
 
 def make_patch(a, b, n=3):
-    diffs = difflib.unified_diff(a.splitlines(True),b.splitlines(True),n=0)
+    diffs = unified_diff(a.splitlines(True),b.splitlines(True),n=0)
     try: _,_ = next(diffs),next(diffs)
     except StopIteration: pass
     # diffs = list(diffs); print(diffs)
@@ -376,10 +375,10 @@ def seperate_yaml_dict_from_body(content):
         body = content
     return body, parameter
 
-    
+
 def load_dirty_json(dirty_json):
     regex_replace = [(r"([ \{,:\[])(u)?'([^']+)'", r'\1"\3"'), (r" False([, \}\]])", r' false\1'), (r" True([, \}\]])", r' true\1')]
     for r, s in regex_replace:
         dirty_json = re.sub(r, s, dirty_json)
     clean_json = json.loads(dirty_json)
-    return clean_json    
+    return clean_json

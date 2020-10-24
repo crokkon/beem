@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.py23 import integer_types, string_types
 from beem.instance import shared_blockchain_instance
 from beem.asset import Asset
 from decimal import Decimal, ROUND_DOWN
@@ -18,7 +18,7 @@ def quantize(amount, precision):
     # make sure amount is decimal and has the asset precision
     amount = Decimal(amount)
     places = Decimal(10) ** (-precision)
-    return amount.quantize(places, rounding=ROUND_DOWN)  
+    return amount.quantize(places, rounding=ROUND_DOWN)
 
 
 class Amount(dict):
@@ -76,13 +76,13 @@ class Amount(dict):
         self["asset"] = {}
         self.new_appbase_format = new_appbase_format
         self.fixed_point_arithmetic = fixed_point_arithmetic
-        
+
         if blockchain_instance is None:
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
                 blockchain_instance = kwargs["hive_instance"]
-        self.blockchain = blockchain_instance or shared_blockchain_instance()           
+        self.blockchain = blockchain_instance or shared_blockchain_instance()
 
         if amount and asset is None and isinstance(amount, Amount):
             # Copy Asset object
@@ -126,7 +126,7 @@ class Amount(dict):
             self["amount"] = amount
             self["asset"] = asset
             self["symbol"] = self["asset"]["symbol"]
-            
+
         elif isinstance(amount, (float)) and asset and isinstance(asset, dict):
             self["amount"] = str(amount)
             self["asset"] = asset
@@ -135,7 +135,7 @@ class Amount(dict):
         elif isinstance(amount, (integer_types, Decimal)) and asset and isinstance(asset, dict):
             self["amount"] = amount
             self["asset"] = asset
-            self["symbol"] = self["asset"]["symbol"]            
+            self["symbol"] = self["asset"]["symbol"]
 
         elif isinstance(amount, (float)) and asset and isinstance(asset, string_types):
             self["amount"] = str(amount)
@@ -145,7 +145,7 @@ class Amount(dict):
         elif isinstance(amount, (integer_types, Decimal)) and asset and isinstance(asset, string_types):
             self["amount"] = amount
             self["asset"] = Asset(asset, blockchain_instance=self.blockchain)
-            self["symbol"] = asset  
+            self["symbol"] = asset
         elif amount and asset and isinstance(asset, Asset):
             self["amount"] = amount
             self["symbol"] = asset["symbol"]
@@ -153,7 +153,7 @@ class Amount(dict):
         elif amount and asset and isinstance(asset, string_types):
             self["amount"] = amount
             self["asset"] = Asset(asset, blockchain_instance=self.blockchain)
-            self["symbol"] = self["asset"]["symbol"]            
+            self["symbol"] = self["asset"]["symbol"]
         else:
             raise ValueError
         if self.fixed_point_arithmetic:
@@ -292,7 +292,7 @@ class Amount(dict):
             a =self.copy()
             a["amount"] =  a["amount"] / other["price"]
             a["asset"] = other["quote"]["asset"].copy()
-            a["symbol"] = other["quote"]["asset"]["symbol"]            
+            a["symbol"] = other["quote"]["asset"]["symbol"]
         else:
             a["amount"] /= Decimal(other)
         if self.fixed_point_arithmetic:
@@ -347,7 +347,7 @@ class Amount(dict):
             self["amount"] *= other["amount"]
         else:
             self["amount"] *= Decimal(other)
-        
+
         self["amount"] = quantize(self["amount"], self["asset"]["precision"])
         return self
 

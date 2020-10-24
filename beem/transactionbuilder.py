@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 import logging
 import struct
-import time
 from datetime import timedelta
 from binascii import unhexlify
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
 from .account import Account
 from .utils import formatTimeFromNow, formatTimeString
 from beembase.objects import Operation
 from beemgraphenebase.account import PrivateKey, PublicKey
 from beembase.signedtransactions import Signed_Transaction
 from beembase.ledgertransactions import Ledger_Transaction
-from beembase import transactions, operations
+from beembase import operations
 from .exceptions import (
     InsufficientAuthorityError,
     MissingKeyError,
@@ -58,7 +56,7 @@ class TransactionBuilder(dict):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]  
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.clear()
         if tx and isinstance(tx, dict):
@@ -220,7 +218,7 @@ class TransactionBuilder(dict):
             account = Account(account, blockchain_instance=self.blockchain)
         if auth_field not in account:
             raise AssertionError("Could not access permission")
-        
+
         if self._use_ledger:
             if not self._is_constructed() or self._is_require_reconstruction():
                 self.constructTx()
@@ -242,13 +240,13 @@ class TransactionBuilder(dict):
             if not key_found:
                 raise AssertionError("Could not find pubkey from %s in path: %s!" % (account["name"], self.path))
             return
-        
+
         if self.blockchain.wallet.locked():
             raise WalletLocked()
         if self.blockchain.use_sc2 and self.blockchain.steemconnect is not None:
             self.blockchain.steemconnect.set_username(account["name"], permission)
             return
-        
+
 
         if account["name"] not in self.signing_accounts:
             # is the account an instance of public key?
@@ -339,14 +337,14 @@ class TransactionBuilder(dict):
             ops.extend([Operation(op, appbase=appbase, prefix=self.blockchain.prefix)])
 
         # calculation expiration time from last block time not system time
-        # it fixes transaction expiration error when pushing transactions 
+        # it fixes transaction expiration error when pushing transactions
         # when blocks are moved forward with debug_produce_block*
         if self.blockchain.is_connected():
             now = formatTimeString(self.blockchain.get_dynamic_global_properties(use_stored_data=False).get('time')).replace(tzinfo=None)
             expiration = now + timedelta(seconds = int(self.expiration or self.blockchain.expiration))
             expiration = expiration.replace(microsecond = 0).isoformat()
         else:
-            expiration = formatTimeFromNow(self.expiration or self.blockchain.expiration)            
+            expiration = formatTimeFromNow(self.expiration or self.blockchain.expiration)
 
         # We now wrap everything into an actual transaction
         if ref_block_num is None or ref_block_prefix is None:
@@ -424,7 +422,7 @@ class TransactionBuilder(dict):
                 self.blockchain.chain_params["prefix"])
         elif "blockchain" in self:
             operations.default_prefix = self["blockchain"]["prefix"]
-        
+
         if self._use_ledger:
             #try:
             #    ledgertx = Ledger_Transaction(**self.json(with_prefix=True))

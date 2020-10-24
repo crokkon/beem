@@ -11,7 +11,6 @@ import secrets
 import string
 import time
 import hashlib
-import math
 import random
 import logging
 import click
@@ -41,16 +40,14 @@ from beem import exceptions
 from beem.version import version as __version__
 from beem.asciichart import AsciiChart
 from beem.transactionbuilder import TransactionBuilder
-from timeit import default_timer as timer
 from beembase import operations
-from beemgraphenebase.account import PrivateKey, PublicKey, BrainKey, PasswordKey, MnemonicKey, Mnemonic
+from beemgraphenebase.account import PrivateKey, PasswordKey, MnemonicKey, Mnemonic
 from beemgraphenebase.base58 import Base58
 from beem.nodelist import NodeList, node_answer_time
 from beem.conveyor import Conveyor
 from beem.imageuploader import ImageUploader
 from beem.rc import RC
 from beem.community import Communities, Community
-from beem.blockchaininstance import BlockChainInstance
 from beem.storage import get_default_config_store
 
 click.disable_unicode_literals_warning = True
@@ -421,7 +418,7 @@ def set(key, value):
     elif key == "use_condenser":
         stm.config["use_condenser"] = value in ["true", "True"]
     elif key == "use_tor":
-        stm.config["use_tor"] = value in ["true", "True"]        
+        stm.config["use_tor"] = value in ["true", "True"]
     else:
         print("wrong key")
 
@@ -2250,7 +2247,7 @@ def beneficiaries(authorperm, beneficiaries, export):
         account = stm.config["default_account"]
     if not unlock_wallet(stm):
         return
-    
+
     options = {"author": c["author"],
                "permlink": c["permlink"],
                "max_accepted_payout": c["max_accepted_payout"],
@@ -3657,7 +3654,7 @@ def witnesscreate(witness, pub_signing_key, maximum_block_size, account_creation
     if not unlock_wallet(stm):
         return
     if stm.is_hive and stm.hardfork >= 24:
-        
+
         props = {
             "account_creation_fee":
                 Amount("%.3f %s" % (float(account_creation_fee), stm.token_symbol), blockchain_instance=stm),
@@ -3674,7 +3671,7 @@ def witnesscreate(witness, pub_signing_key, maximum_block_size, account_creation
                 int(maximum_block_size),
             "sbd_interest_rate":
                 int(sbd_interest_rate * 100)
-        }        
+        }
 
     tx = stm.witness_update(pub_signing_key, url, props, account=witness)
     if stm.unsigned and stm.nobroadcast and stm.steemconnect is not None:
@@ -3716,7 +3713,7 @@ def witnessproperties(witness, wif, account_creation_fee, account_subsidy_budget
     if sbd_interest_rate is not None:
         props["sbd_interest_rate"] = int(sbd_interest_rate * 100)
     if hbd_interest_rate is not None:
-        props["hbd_interest_rate"] = int(hbd_interest_rate * 100)        
+        props["hbd_interest_rate"] = int(hbd_interest_rate * 100)
     if new_signing_key is not None:
         props["new_signing_key"] = new_signing_key
     if url is not None:
@@ -3752,12 +3749,12 @@ def witnessfeed(witness, wif, base, quote, support_peg):
         use_hbd = True
         old_base = witness["hbd_exchange_rate"]["base"]
         old_quote = witness["hbd_exchange_rate"]["quote"]
-        last_published_price = Price(witness["hbd_exchange_rate"], blockchain_instance=stm)   
+        last_published_price = Price(witness["hbd_exchange_rate"], blockchain_instance=stm)
     else:
         old_base = witness["sbd_exchange_rate"]["base"]
         old_quote = witness["sbd_exchange_rate"]["quote"]
         last_published_price = Price(witness["sbd_exchange_rate"], blockchain_instance=stm)
-     
+
     steem_usd = None
     hive_usd = None
     print("Old price %.3f (base: %s, quote %s)" % (float(last_published_price), old_base, old_quote))
@@ -3800,7 +3797,7 @@ def witnessfeed(witness, wif, base, quote, support_peg):
         tx = stm.witness_set_properties(wif, witness["owner"], props)
     elif wif is not None:
         props = {"sbd_exchange_rate": new_price}
-        tx = stm.witness_set_properties(wif, witness["owner"], props)        
+        tx = stm.witness_set_properties(wif, witness["owner"], props)
     else:
         tx = witness.feed_publish(base, quote=quote)
     if stm.unsigned and stm.nobroadcast and stm.steemconnect is not None:
@@ -4222,7 +4219,7 @@ def rewards(accounts, only_sum, post, comment, curation, length, author, permlin
                         payout_STEEM = Amount(v["steem_payout"], blockchain_instance=stm)
                     else:
                         payout_SBD = Amount(v["hbd_payout"], blockchain_instance=stm)
-                        payout_STEEM = Amount(v["hive_payout"], blockchain_instance=stm)                        
+                        payout_STEEM = Amount(v["hive_payout"], blockchain_instance=stm)
                     sum_reward[0] += float(payout_SBD)
                     sum_reward[1] += float(payout_STEEM)
                     payout_SP = stm.vests_to_token_power(Amount(v["vesting_payout"], blockchain_instance=stm))

@@ -1,19 +1,13 @@
 # -*- coding: utf-8 -*-
-import json
 import logging
-import re
-import os
-import math
-import ast
-import time
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
-from datetime import datetime, timedelta, date
-from beembase import transactions, operations
+from math import copysign, ceil
+from beemgraphenebase.py23 import string_types
+from datetime import datetime, date
 from beemgraphenebase.chains import known_chains
 from .amount import Amount
+from .utils import formatToTimeStamp
 from beem.blockchaininstance import BlockChainInstance
-from .utils import formatTime, resolve_authorperm, derive_permlink, sanitize_permlink, remove_from_dict, addTzInfo, formatToTimeStamp
-from beem.constants import STEEM_VOTE_REGENERATION_SECONDS, STEEM_100_PERCENT, STEEM_1_PERCENT, STEEM_RC_REGEN_TIME
+from beem.constants import STEEM_100_PERCENT
 
 log = logging.getLogger(__name__)
 
@@ -109,7 +103,7 @@ class Hive(BlockChainInstance):
                 }
             )
 
-    """    
+    """
 
     def get_network(self, use_stored_data=True, config=None):
         """ Identify the network
@@ -191,7 +185,7 @@ class Hive(BlockChainInstance):
             float(Amount(global_properties['total_vesting_fund_hive'], blockchain_instance=self)) /
             (float(Amount(global_properties['total_vesting_shares'], blockchain_instance=self)) / 1e6)
         )
-        
+
 
     def vests_to_hp(self, vests, timestamp=None, use_stored_data=True):
         """ Converts vests to HP
@@ -250,7 +244,7 @@ class Hive(BlockChainInstance):
             Only impactful for very big votes. Slight modification to the value calculation, as the not_broadcasted
             vote rshares decreases the reward pool.
         """
-        vote_rshares = self.vests_to_rshares(vests, post_rshares=post_rshares, voting_power=voting_power, vote_pct=vote_pct)       
+        vote_rshares = self.vests_to_rshares(vests, post_rshares=post_rshares, voting_power=voting_power, vote_pct=vote_pct)
         return self.rshares_to_hbd(vote_rshares, not_broadcasted_vote=not_broadcasted_vote, use_stored_data=use_stored_data)
 
     def hp_to_rshares(self, hive_power, post_rshares=0, voting_power=STEEM_100_PERCENT, vote_pct=STEEM_100_PERCENT, use_stored_data=True):
@@ -278,11 +272,11 @@ class Hive(BlockChainInstance):
         """
         used_power = self._calc_resulting_vote(voting_power=voting_power, vote_pct=vote_pct, use_stored_data=use_stored_data)
         # calculate vote rshares
-        rshares = int(math.copysign(vests * 1e6 * used_power / STEEM_100_PERCENT, vote_pct))
+        rshares = int(copysign(vests * 1e6 * used_power / STEEM_100_PERCENT, vote_pct))
         if subtract_dust_threshold:
             if abs(rshares) <= self.get_dust_threshold(use_stored_data=use_stored_data):
                 return 0
-            rshares -= math.copysign(self.get_dust_threshold(use_stored_data=use_stored_data), vote_pct)     
+            rshares -= copysign(self.get_dust_threshold(use_stored_data=use_stored_data), vote_pct)
         rshares = self._calc_vote_claim(rshares, post_rshares)
         return rshares
 
@@ -354,24 +348,24 @@ class Hive(BlockChainInstance):
             vests = int(self.hp_to_vests(hive_power, use_stored_data=use_stored_data) * 1e6)
 
         if self.hardfork >= 20:
-            rshares += math.copysign(self.get_dust_threshold(use_stored_data=use_stored_data), rshares)
+            rshares += copysign(self.get_dust_threshold(use_stored_data=use_stored_data), rshares)
 
         if post_rshares >= 0 and rshares > 0:
-            rshares = math.copysign(self._calc_revert_vote_claim(abs(rshares), post_rshares), rshares)
+            rshares = copysign(self._calc_revert_vote_claim(abs(rshares), post_rshares), rshares)
         elif post_rshares < 0 and rshares < 0:
-            rshares = math.copysign(self._calc_revert_vote_claim(abs(rshares), abs(post_rshares)), rshares)
+            rshares = copysign(self._calc_revert_vote_claim(abs(rshares), abs(post_rshares)), rshares)
         elif post_rshares < 0 and rshares > 0:
-            rshares = math.copysign(self._calc_revert_vote_claim(abs(rshares), 0), rshares)
+            rshares = copysign(self._calc_revert_vote_claim(abs(rshares), 0), rshares)
         elif post_rshares > 0 and rshares < 0:
-            rshares = math.copysign(self._calc_revert_vote_claim(abs(rshares), post_rshares), rshares)
+            rshares = copysign(self._calc_revert_vote_claim(abs(rshares), post_rshares), rshares)
 
         max_vote_denom = self._max_vote_denom(use_stored_data=use_stored_data)
 
-        used_power = int(math.ceil(abs(rshares) * STEEM_100_PERCENT / vests))
+        used_power = int(ceil(abs(rshares) * STEEM_100_PERCENT / vests))
         used_power = used_power * max_vote_denom
 
         vote_pct = used_power * STEEM_100_PERCENT / (60 * 60 * 24) / voting_power
-        return int(math.copysign(vote_pct, rshares))
+        return int(copysign(vote_pct, rshares))
 
     def hbd_to_vote_pct(self, hbd, post_rshares=0, hive_power=None, vests=None, voting_power=STEEM_100_PERCENT, not_broadcasted_vote=True, use_stored_data=True):
         """ Obtain the voting percentage for a desired HBD value

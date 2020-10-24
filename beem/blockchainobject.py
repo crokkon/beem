@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
+from beemgraphenebase.py23 import integer_types, string_types
 from beem.instance import shared_blockchain_instance
 from datetime import datetime, timedelta
 import json
@@ -110,7 +110,7 @@ class BlockchainObject(dict):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]      
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         self.cached = False
         self.identifier = None

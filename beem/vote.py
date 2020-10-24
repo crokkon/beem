@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
-import math
 import pytz
 import logging
 from prettytable import PrettyTable
 from datetime import datetime, date
-from beemgraphenebase.py23 import integer_types, string_types, text_type
+from beemgraphenebase.py23 import integer_types, string_types
 from .instance import shared_blockchain_instance
 from .account import Account
 from .exceptions import VoteDoesNotExistsException
@@ -48,7 +47,7 @@ class Vote(BlockchainObject):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         if isinstance(voter, string_types) and authorperm is not None:
             [author, permlink] = resolve_authorperm(authorperm)
@@ -136,7 +135,7 @@ class Vote(BlockchainObject):
         elif "timestamp" in vote and isinstance(vote.get("timestamp"), string_types) and vote.get("timestamp") != '':
             vote["time"] = formatTimeString(vote.get("timestamp", "1970-01-01T00:00:00"))
         elif "last_update" in vote and isinstance(vote.get("last_update"), string_types) and vote.get("last_update") != '':
-            vote["last_update"] = formatTimeString(vote.get("last_update", "1970-01-01T00:00:00"))        
+            vote["last_update"] = formatTimeString(vote.get("last_update", "1970-01-01T00:00:00"))
         else:
             vote["time"] = formatTimeString("1970-01-01T00:00:00")
         return vote
@@ -303,7 +302,7 @@ class VotesObject(list):
                 stop = None
             percent = vote.get('percent', '')
             if percent == '':
-                percent = vote.get('vote_percent', '') 
+                percent = vote.get('vote_percent', '')
             if percent == '':
                 start_percent = None
                 stop_percent = None
@@ -370,7 +369,7 @@ class ActiveVotes(VotesObject):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         votes = None
         if not self.blockchain.is_connected():
@@ -402,7 +401,7 @@ class ActiveVotes(VotesObject):
                 try:
                     votes = self.blockchain.rpc.get_active_votes(author, permlink, api="condenser")
                 except InvalidParameters:
-                    raise VoteDoesNotExistsException(construct_authorperm(author, permlink))                    
+                    raise VoteDoesNotExistsException(construct_authorperm(author, permlink))
                 except:
                     votes = self.blockchain.rpc.get_active_votes({'author': author,
                                                              'permlink': permlink},
@@ -438,7 +437,7 @@ class AccountVotes(VotesObject):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         self.blockchain = blockchain_instance or shared_blockchain_instance()
         start = addTzInfo(start)
         stop = addTzInfo(stop)

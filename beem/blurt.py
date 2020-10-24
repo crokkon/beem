@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
-import json
 import logging
-import re
-import os
-import math
-import ast
-import time
-from beemgraphenebase.py23 import bytes_types, integer_types, string_types, text_type
-from datetime import datetime, timedelta, date
+from math import copysign, ceil
+from beemgraphenebase.py23 import string_types
+from datetime import datetime, date
 from beemgraphenebase.chains import known_chains
 from .amount import Amount
-from .utils import formatTime, resolve_authorperm, derive_permlink, sanitize_permlink, remove_from_dict, addTzInfo, formatToTimeStamp
-from beem.constants import STEEM_VOTE_REGENERATION_SECONDS, STEEM_100_PERCENT, STEEM_1_PERCENT, STEEM_RC_REGEN_TIME
+from .utils import formatToTimeStamp
+from beem.constants import STEEM_VOTE_REGENERATION_SECONDS, STEEM_100_PERCENT
 from beem.blockchaininstance import BlockChainInstance
 log = logging.getLogger(__name__)
 
@@ -130,7 +125,7 @@ class Blurt(BlockChainInstance):
             return known_chains["BLURT"]
 
     def rshares_to_token_backed_dollar(self, rshares, not_broadcasted_vote=False, use_stored_data=True):
-        return self.rshares_to_bbd(rshares, not_broadcasted_vote=not_broadcasted_vote, use_stored_data=use_stored_data)        
+        return self.rshares_to_bbd(rshares, not_broadcasted_vote=not_broadcasted_vote, use_stored_data=use_stored_data)
 
     def rshares_to_bbd(self, rshares, not_broadcasted_vote=False, use_stored_data=True):
         """ Calculates the current SBD value of a vote
@@ -282,12 +277,12 @@ class Blurt(BlockChainInstance):
         """
         used_power = self._calc_resulting_vote(voting_power=voting_power, vote_pct=vote_pct, use_stored_data=use_stored_data)
         # calculate vote rshares
-        rshares = int(math.copysign(vests * 1e6 * used_power / STEEM_100_PERCENT, vote_pct))
+        rshares = int(copysign(vests * 1e6 * used_power / STEEM_100_PERCENT, vote_pct))
         if subtract_dust_threshold:
             if abs(rshares) <= self.get_dust_threshold(use_stored_data=use_stored_data):
                 return 0
-            rshares -= math.copysign(self.get_dust_threshold(use_stored_data=use_stored_data), vote_pct)      
-        rshares = self._calc_vote_claim(rshares, post_rshares)        
+            rshares -= copysign(self.get_dust_threshold(use_stored_data=use_stored_data), vote_pct)
+        rshares = self._calc_vote_claim(rshares, post_rshares)
         return rshares
 
     def bbd_to_rshares(self, sbd, not_broadcasted_vote=False, use_stored_data=True):
@@ -358,24 +353,24 @@ class Blurt(BlockChainInstance):
             vests = int(self.bp_to_vests(steem_power, use_stored_data=use_stored_data) * 1e6)
 
         if self.hardfork >= 20:
-            rshares += math.copysign(self.get_dust_threshold(use_stored_data=use_stored_data), rshares)
+            rshares += copysign(self.get_dust_threshold(use_stored_data=use_stored_data), rshares)
 
         if post_rshares >= 0 and rshares > 0:
-            rshares = math.copysign(self._calc_revert_vote_claim(abs(rshares), post_rshares), rshares)
+            rshares = copysign(self._calc_revert_vote_claim(abs(rshares), post_rshares), rshares)
         elif post_rshares < 0 and rshares < 0:
-            rshares = math.copysign(self._calc_revert_vote_claim(abs(rshares), abs(post_rshares)), rshares)
+            rshares = copysign(self._calc_revert_vote_claim(abs(rshares), abs(post_rshares)), rshares)
         elif post_rshares < 0 and rshares > 0:
-            rshares = math.copysign(self._calc_revert_vote_claim(abs(rshares), 0), rshares)
+            rshares = copysign(self._calc_revert_vote_claim(abs(rshares), 0), rshares)
         elif post_rshares > 0 and rshares < 0:
-            rshares = math.copysign(self._calc_revert_vote_claim(abs(rshares), post_rshares), rshares)
+            rshares = copysign(self._calc_revert_vote_claim(abs(rshares), post_rshares), rshares)
 
         max_vote_denom = self._max_vote_denom(use_stored_data=use_stored_data)
 
-        used_power = int(math.ceil(abs(rshares) * STEEM_100_PERCENT / vests))
+        used_power = int(ceil(abs(rshares) * STEEM_100_PERCENT / vests))
         used_power = used_power * max_vote_denom
 
         vote_pct = used_power * STEEM_100_PERCENT / (60 * 60 * 24) / voting_power
-        return int(math.copysign(vote_pct, rshares))
+        return int(copysign(vote_pct, rshares))
 
     def bbd_to_vote_pct(self, sbd, post_rshares=0, steem_power=None, vests=None, voting_power=STEEM_100_PERCENT, not_broadcasted_vote=True, use_stored_data=True):
         """ Obtain the voting percentage for a desired SBD value

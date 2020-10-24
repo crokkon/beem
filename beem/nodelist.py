@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import re
-import time
-import math
 from timeit import default_timer as timer
 import json
 from beem.instance import shared_blockchain_instance
@@ -156,7 +153,7 @@ class NodeList(list):
                 "type": "appbase",
                 "owner": "pharesim",
                 "hive": True,
-                "score": 10                
+                "score": 10
             },
             {
                 "url": "https://rpc.ausbit.dev",
@@ -164,7 +161,7 @@ class NodeList(list):
                 "type": "appbase",
                 "owner": "ausbitbank",
                 "hive": True,
-                "score": 50                
+                "score": 50
             },
             {
                 "url": "https://hive.roelandp.nl",
@@ -172,7 +169,7 @@ class NodeList(list):
                 "type": "appbase",
                 "owner": "roelandp",
                 "hive": True,
-                "score": 50                
+                "score": 50
             },
             {
                 "url": "https://api.c0ff33a.uk",
@@ -180,7 +177,7 @@ class NodeList(list):
                 "type": "appbase",
                 "owner": "c0ff33a",
                 "hive": True,
-                "score": 40                
+                "score": 40
             },
             {
                 "url": "https://api.deathwing.me",
@@ -188,7 +185,7 @@ class NodeList(list):
                 "type": "appbase",
                 "owner": "deathwing",
                 "hive": True,
-                "score": 40                
+                "score": 40
             },
             {
                 "url": "https://hive-api.arcange.eu",
@@ -196,7 +193,7 @@ class NodeList(list):
                 "type": "appbase",
                 "owner": "arcange",
                 "hive": True,
-                "score": 40                   
+                "score": 40
             },
             {
                 "url": "https://fin.hive.3speak.co",
@@ -204,8 +201,8 @@ class NodeList(list):
                 "type": "appbase",
                 "owner": "3speak",
                 "hive": True,
-                "score": 40                   
-            }            
+                "score": 40
+            }
         ]
         super(NodeList, self).__init__(nodes)
 
@@ -219,7 +216,7 @@ class NodeList(list):
 
     def get_node_answer_time(self, node_list=None, verbose=False):
         """ Pings all nodes and measure the answer time
-        
+
             .. code-block:: python
 
                 from beem.nodelist import NodeList
@@ -252,7 +249,7 @@ class NodeList(list):
         sorted_nodes = []
         for i in sorted_arg:
             if ping_times[i] != float("inf"):
-                sorted_nodes.append({"url": node_list[i], "delay_ms": ping_times[i] * 1000})      
+                sorted_nodes.append({"url": node_list[i], "delay_ms": ping_times[i] * 1000})
         return sorted_nodes
 
     def update_nodes(self, weights=None, blockchain_instance=None, **kwargs):
@@ -274,7 +271,7 @@ class NodeList(list):
             if kwargs.get("steem_instance"):
                 blockchain_instance = kwargs["steem_instance"]
             elif kwargs.get("hive_instance"):
-                blockchain_instance = kwargs["hive_instance"]        
+                blockchain_instance = kwargs["hive_instance"]
         steem = blockchain_instance or shared_blockchain_instance()
         metadata = None
         account = None
@@ -396,7 +393,7 @@ class NodeList(list):
         """
         node_list = []
         node_type_list = []
-      
+
         for node in self:
             if not node["hive"]:
                 continue
@@ -426,7 +423,7 @@ class NodeList(list):
                 continue
             if (node["score"] < 0 and not not_working):
                 continue
-            if (testnet and node["type"] == "testnet") or (not testnet and node["type"] != "testnet"):            
+            if (testnet and node["type"] == "testnet") or (not testnet and node["type"] != "testnet"):
                 if not https and node["url"][:5] == 'https':
                     continue
                 if not wss and node["url"][:3] == 'wss':
